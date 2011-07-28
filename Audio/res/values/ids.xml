@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="ViewIndication" type="id"></item>
+    <item name="PlayControlPanel" type="id"></item>
+    <item type="id" name="layoutPlayMode"></item>
+    <item type="id" name="IndPlayMode"></item>
+    <item type="id" name="imgPlayMode"></item>
+    <item type="id" name="ImgBtListBack"></item>
+    <item type="id" name="layoutPrev"></item>
+    <item type="id" name="btnPrev"></item>
+    <item type="id" name="imgPrev"></item>
+    <item type="id" name="layoutPlay"></item>
+    <item type="id" name="btnPlay"></item>
+    <item type="id" name="imgPlay"></item>
+    <item type="id" name="layoutNext"></item>
+    <item type="id" name="btnNext"></item>
+    <item type="id" name="imgNext"></item>
+    <item type="id" name="layoutMenu"></item>
+    <item type="id" name="IndMenu"></item>
+    <item type="id" name="ImgMenu"></item>
+    <item name="PlayControlPanpelTop" type="id"></item>   
+    
+    <item type="id" name="ImgMain"></item>
+    <item type="id" name="ImgList"></item>
+    <item type="id" name="ImgLyric"></item> 
+    
+    <item type="id" name="IndMain"></item>
+    <item type="id" name="IndList"></item>
+    <item type="id" name="IndLyric"></item>
+    <item type="id" name="ImgBtnVolume"></item>
+    
+    <item type="id" name="linearLeft"></item>
+    <item type="id" name="linearMid"></item>
+    <item type="id" name="linearRight"></item>
+    <item type="id" name="MusicListView"></item>
+    <item name="MusicListLay" type="id"></item>
+</resources>
