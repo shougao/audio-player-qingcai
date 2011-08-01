@@ -1,12 +1,50 @@
 package com.shougao.Audio;
 
+import com.shougao.Audio.DataBase.AUDIO_TAG;
+
 import android.os.Parcel;
 import android.os.RemoteException;
 
 public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
 	@Override
-	public String getString() throws RemoteException {
+	public AUDIO_TAG[] getAudio() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCurrentOrderIndex() throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public AUDIO_TAG[] getCurrentPlayAudio() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCurrentPlayIndex() throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getDruation() throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getMediaTime() throws RemoteException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public AUDIO_TAG[] getPlayList() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -14,92 +52,98 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void play() throws RemoteException {
 		// TODO Auto-generated method stub
-		System.out.println("DEBUG>>> MediaService:play()");
-		System.out.println("DEBUG>>>  MediaServcie thread:" + Thread.currentThread().getId());
+		Play myPlay = new Play();
+		myPlay.mp3Play();
 	}
 
 	@Override
 	public void stop() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void pause() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void prev() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void next() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
-	public void getPlayState() throws RemoteException {
+	public int getPlayState() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	@Override
-	public void getRepeatMode() throws RemoteException {
+	public int getRepeatMode() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	@Override
-	public void getCurrentPlayIndex() throws RemoteException {
+	public int getShuffleMode() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	@Override
-	public void getDruation() throws RemoteException {
+	public int getTotalPlayNum() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	@Override
-	public void getMediaTime() throws RemoteException {
+	public int setRepeatMode() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		return 0;
 	}
 
 	@Override
-	public void getShuffleMode() throws RemoteException {
+	public void setCurrentPlayIndex() throws RemoteException {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
-	public void getTotalPlayNum() throws RemoteException {
+	public void setShuffleMode(int paramInt) throws RemoteException {
 		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
-	public String[] getPlayList() throws RemoteException {
+	public void setMediaTime(int paramInt) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		
 	}
 
 	@Override
-	public String[] setPlayList() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String[] updatePlayList() throws RemoteException {
+	public AUDIO_TAG[] setPlayList() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setStopTimer(long paramInt) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updatePlayList(AUDIO_TAG[] paramInt) throws RemoteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

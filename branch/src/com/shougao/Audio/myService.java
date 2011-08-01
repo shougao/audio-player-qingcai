@@ -8,7 +8,6 @@ import android.os.IBinder;
 
 public class myService extends Service {
 	private MediaService myMediaService = new MediaService();
-	//private IBinder ib = null;
 	
 	public void onCreate() {
 		System.out.println("DEBUG>>>on create");
