@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shougao.Audio.media.IMediaService;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -29,9 +31,9 @@ import android.widget.Toast;
 public class AudioActivity extends Activity implements OnClickListener,
 		OnItemClickListener {
 	/** Called when the activity is first created. */
-	private ImageButton btnPlayMode, btnPlay, btnNext, btnList;
+	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric;
 	private ImageView btnMain, vPlayMode;
-	private IBinder ib;
+	private IMediaService localMediaService;
 	private ListView musicListView;
 	private ArrayAdapter<String> adapter;
 	private FileList fl = new FileList();
@@ -43,12 +45,14 @@ public class AudioActivity extends Activity implements OnClickListener,
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
 		btnList = (ImageButton) findViewById(R.id.ImgList);
+		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
 		musicListView = (ListView) findViewById(R.id.MusicListView);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
 		btnPlay.setOnClickListener(this);
 		btnPlayMode.setOnClickListener(this);
 		btnList.setOnClickListener(this);
 		btnNext.setOnClickListener(this);
+		ImgLyric.setOnClickListener(this);
 		bindService(new Intent("com.shougao.Audio.REMOTE_SERVICE"),
 				mServiceConn, Context.BIND_AUTO_CREATE);
 
@@ -58,7 +62,7 @@ public class AudioActivity extends Activity implements OnClickListener,
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
-			ib = service;
+			localMediaService = IMediaService.Stub.asInterface(service);
 			System.out.println("DEBUG>>>ServiceConnection.");
 		}
 
@@ -73,11 +77,16 @@ public class AudioActivity extends Activity implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btnPlay:
-			play();
+			try {
+				localMediaService.play();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			break;
 
 		case R.id.btnNext:
-			next();
+//			next();
 			break;
 
 		case R.id.ImgList:
@@ -89,42 +98,44 @@ public class AudioActivity extends Activity implements OnClickListener,
 		case R.id.IndPlayMode:
 			System.out.println("========");
 			vPlayMode.setImageResource(R.drawable.icon_playmode_shuffle);
+		case R.id.ImgLyric:
+			System.out.println("========imglyric");
+			System.out.println("DEBUG>>> main acitvity thread" + Thread.currentThread().getId());
+			break;
 		}
 	}
 
-	private void play() {
-		// TODO Auto-generated method stub
-		Parcel pc = Parcel.obtain();
-		Parcel pc_reply = Parcel.obtain();
-		try {
-			System.out.println("DEBUG>>>pc" + pc.toString());
-			System.out.println("DEBUG>>>pc_replay" + pc_reply.toString());
-			ib.transact(1, pc, pc_reply, 0);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//	private void play() {
+//		// TODO Auto-generated method stub
+//		Parcel pc = Parcel.obtain();
+//		Parcel pc_reply = Parcel.obtain();
+//		try {
+//			System.out.println("DEBUG>>>pc" + pc.toString());
+//			System.out.println("DEBUG>>>pc_replay" + pc_reply.toString());
+//			ib.transact(1, pc, pc_reply, 0);
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
-	}
-
-	private void next() {
-		// TODO Auto-generated method stub
-		Parcel pc = Parcel.obtain();
-		Parcel pc_reply = Parcel.obtain();
-		try {
-			System.out.println("DEBUG>>>pc" + pc.toString());
-			System.out.println("DEBUG>>>pc_replay" + pc_reply.toString());
-			ib.transact(2, pc, pc_reply, 0);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
+//	private void next() {
+//		// TODO Auto-generated method stub
+//		Parcel pc = Parcel.obtain();
+//		Parcel pc_reply = Parcel.obtain();
+//		try {
+//			System.out.println("DEBUG>>>pc" + pc.toString());
+//			System.out.println("DEBUG>>>pc_replay" + pc_reply.toString());
+//			ib.transact(2, pc, pc_reply, 0);
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {

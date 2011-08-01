@@ -7,27 +7,23 @@ import android.content.Intent;
 import android.os.IBinder;
 
 public class myService extends Service {
-	private IBinder ib = null;
-
-	@Override
-
+	private MediaService myMediaService = new MediaService();
+	//private IBinder ib = null;
 	
 	public void onCreate() {
 		System.out.println("DEBUG>>>on create");
-		ib = new myBinder();
 	}
 	
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
-		System.out.println("DEBUG>>> on bind");
-		return ib;
+		return myMediaService;
 	}
 	
 	public void onStart(){
 		System.out.println("DEBUG>>> on start");
-		//play();
 	}
 	
 	public void onStop(){
 	}
+	
 }
