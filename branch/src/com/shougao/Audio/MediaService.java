@@ -1,12 +1,25 @@
 package com.shougao.Audio;
 
 import com.shougao.Audio.DataBase.AUDIO_TAG;
+import com.shougao.Audio.PlayMode.CurrentPlayMode;
+import com.shougao.Audio.PlayMode.IPlayMode;
+import com.shougao.Audio.PlayMode.NormalPlayMode;
+import com.shougao.Audio.PlayMode.OrderPlayMode;
+import com.shougao.Audio.PlayMode.ShufflePlayMode;
+import com.shougao.Audio.PlayMode.SinglePlayMode;
 
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.widget.ImageView;
 
 public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
+	
+	static int intPlayMode = 1;
+//	static final int PLAYMODE_NORMAL = 1;	
+//	static final int PLAYMODE_ORDER = 2;
+//	static final int PLAYMODE_SINGLE = 3;
+//	static final int PLAYMODE_SHUFFLE = 4;
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
 		// TODO Auto-generated method stub
@@ -52,8 +65,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void play() throws RemoteException {
 		// TODO Auto-generated method stub
-		MyService myService = new MyService();
-		myService.play();
+		MyService localService = new MyService();
+		localService.play();
 	}
 
 	@Override
@@ -65,19 +78,22 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void pause() throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		MyService localService = new MyService();
+		localService.pause();
 	}
 
 	@Override
 	public void prev() throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		MyService localService = new MyService();
+		localService.prev();
 	}
 
 	@Override
 	public void next() throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		MyService localService = new MyService();
+		localService.next();
 	}
 
 	@Override
@@ -88,7 +104,10 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
 	@Override
 	public int getRepeatMode() throws RemoteException {
-		// TODO Auto-generated method stub
+		CurrentPlayMode localPlayMode = new CurrentPlayMode();
+		//localPlayMode.setPlayMode(new OrderPlayMode());
+		int i = localPlayMode.getPlayMode();
+		System.out.println("=======:" + i);
 		return 0;
 	}
 
@@ -106,7 +125,24 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
 	@Override
 	public int setRepeatMode() throws RemoteException {
-		// TODO Auto-generated method stub
+		System.out.println("=====intPlayMode:" + intPlayMode);
+		intPlayMode = intPlayMode + 1;
+		CurrentPlayMode localPlayMode = new CurrentPlayMode();
+		intPlayMode = (intPlayMode % 4);
+		switch(intPlayMode){
+		case 1:
+			localPlayMode.setPlayMode(new NormalPlayMode());
+			break;
+		case 2:
+			localPlayMode.setPlayMode(new OrderPlayMode());
+			break;
+		case 3:
+			localPlayMode.setPlayMode(new SinglePlayMode());
+			break;
+		case 0:
+			localPlayMode.setPlayMode(new ShufflePlayMode());
+			break;
+		}
 		return 0;
 	}
 

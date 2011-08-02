@@ -4,6 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shougao.Audio.PlayMode.CurrentPlayMode;
+import com.shougao.Audio.PlayMode.OrderPlayMode;
+import com.shougao.Audio.PlayMode.ShufflePlayMode;
+import com.shougao.Audio.PlayMode.SinglePlayMode;
 import com.shougao.Audio.media.IMediaService;
 
 import android.app.Activity;
@@ -31,6 +35,7 @@ import android.widget.Toast;
 public class AudioActivity extends Activity implements OnClickListener,
 		OnItemClickListener {
 	/** Called when the activity is first created. */
+	static int intPlayMode = 1;
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric;
 	private ImageView btnMain, vPlayMode;
 	private IMediaService localMediaService;
@@ -85,6 +90,12 @@ public class AudioActivity extends Activity implements OnClickListener,
 			break;
 
 		case R.id.btnNext:
+			try {
+				localMediaService.next();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			break;
 
 		case R.id.ImgList:
@@ -93,9 +104,54 @@ public class AudioActivity extends Activity implements OnClickListener,
 					R.layout.my_simple_list_item, fl.getMp3());
 			musicListView.setAdapter(adapter);
 			break;
+			
 		case R.id.IndPlayMode:
 			System.out.println("========");
-			vPlayMode.setImageResource(R.drawable.icon_playmode_shuffle);
+			intPlayMode = intPlayMode + 1;
+			intPlayMode = (intPlayMode % 4);
+			switch(intPlayMode){
+			case 1:
+				vPlayMode.setImageResource(R.drawable.icon_playmode_normal);
+				Toast.makeText(getApplicationContext(), "顺序播放", Toast.LENGTH_SHORT).show();
+				try {
+					localMediaService.setRepeatMode();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			case 2:
+				vPlayMode.setImageResource(R.drawable.icon_playmode_repeat);
+				Toast.makeText(getApplicationContext(), "循环播放", Toast.LENGTH_SHORT).show();
+				try {
+					localMediaService.setRepeatMode();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			case 3:
+				vPlayMode.setImageResource(R.drawable.icon_playmode_repeat_single);
+				Toast.makeText(getApplicationContext(), "单曲重复", Toast.LENGTH_SHORT).show();
+				try {
+					localMediaService.setRepeatMode();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			case 0:
+				vPlayMode.setImageResource(R.drawable.icon_playmode_shuffle);
+				Toast.makeText(getApplicationContext(), "随机播放", Toast.LENGTH_SHORT).show();
+				try {
+					localMediaService.setRepeatMode();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			}
+			
 		case R.id.ImgLyric:
 			System.out.println("========imglyric");
 			System.out.println("DEBUG>>> main acitvity thread" + Thread.currentThread().getId());
