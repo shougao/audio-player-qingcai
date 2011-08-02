@@ -6,7 +6,7 @@ import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import com.shougao.Audio.DataBase.AUDIO_TAG;
-import com.shougao.Audio.DataBase.AUDIO_TAG_1;
+//import com.shougao.Audio.DataBase.AUDIO_TAG_1;
 import android.os.Parcelable;
 
 interface IMediaService{
