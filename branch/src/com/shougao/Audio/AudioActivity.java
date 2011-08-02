@@ -72,7 +72,6 @@ public class AudioActivity extends Activity implements OnClickListener,
 		}
 	};
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -86,7 +85,6 @@ public class AudioActivity extends Activity implements OnClickListener,
 			break;
 
 		case R.id.btnNext:
-//			next();
 			break;
 
 		case R.id.ImgList:

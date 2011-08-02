@@ -52,8 +52,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void play() throws RemoteException {
 		// TODO Auto-generated method stub
-		Play myPlay = new Play();
-		myPlay.mp3Play();
+		MyService myService = new MyService();
+		myService.play();
 	}
 
 	@Override

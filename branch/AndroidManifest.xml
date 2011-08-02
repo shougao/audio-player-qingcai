@@ -19,7 +19,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<service android:name="myService" android:process=":remote">
+		<service android:process=":remote" android:name="MyService">
 			<intent-filter>
 				<action android:name="com.shougao.Audio.REMOTE_SERVICE"></action>
 			</intent-filter>
