@@ -1,6 +1,9 @@
 package com.shougao.Audio;
 
+import java.io.IOException;
+
 import com.shougao.Audio.DataBase.AUDIO_TAG;
+import com.shougao.Audio.DataBase.AudioDataTools;
 import com.shougao.Audio.PlayMode.CurrentPlayMode;
 import com.shougao.Audio.PlayMode.IPlayMode;
 import com.shougao.Audio.PlayMode.NormalPlayMode;
@@ -8,18 +11,23 @@ import com.shougao.Audio.PlayMode.OrderPlayMode;
 import com.shougao.Audio.PlayMode.ShufflePlayMode;
 import com.shougao.Audio.PlayMode.SinglePlayMode;
 
+import android.media.MediaPlayer;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.widget.ImageView;
 
 public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
-	
+	static int playState = 1;
+	static final int PLAYING = 1;
+	static final int PAUSE = 2;
+	static final int STOP = 0;
 	static int intPlayMode = 1;
-//	static final int PLAYMODE_NORMAL = 1;	
-//	static final int PLAYMODE_ORDER = 2;
-//	static final int PLAYMODE_SINGLE = 3;
-//	static final int PLAYMODE_SHUFFLE = 4;
+	static final int PLAYMODE_NORMAL = 1;
+	static final int PLAYMODE_ORDER = 2;
+	static final int PLAYMODE_SINGLE = 3;
+	static final int PLAYMODE_SHUFFLE = 4;
+	private MediaPlayer mp = new MediaPlayer();
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
 		// TODO Auto-generated method stub
@@ -65,8 +73,25 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void play() throws RemoteException {
 		// TODO Auto-generated method stub
-		MyService localService = new MyService();
-		localService.play();
+		mp.reset();
+		System.out.println("DEBUG>>>play:");
+		AudioDataTools localTool = new AudioDataTools();
+		String path = localTool.getFilePath("/sdcard", "happy.mp3");
+		try {
+			mp.setDataSource(path);
+			mp.prepare();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mp.start();
+		playState = 1;
 	}
 
 	@Override
@@ -99,6 +124,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public int getPlayState() throws RemoteException {
 		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 

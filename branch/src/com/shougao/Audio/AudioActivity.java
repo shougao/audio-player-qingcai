@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.shougao.Audio.DataBase.FileList;
 import com.shougao.Audio.PlayMode.CurrentPlayMode;
 import com.shougao.Audio.PlayMode.OrderPlayMode;
 import com.shougao.Audio.PlayMode.ShufflePlayMode;

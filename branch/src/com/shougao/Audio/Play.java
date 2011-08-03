@@ -3,6 +3,8 @@ package com.shougao.Audio;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.shougao.Audio.DataBase.FileList;
+
 import android.media.MediaPlayer;
 
 public class Play {
@@ -43,10 +45,5 @@ public class Play {
 			return fl.getPath().get(randomNumber);
 		}
 		return null;
-	}
-
-	public void next() {
-		// TODO Auto-generated method stub
-		mp.stop();
 	}
 }

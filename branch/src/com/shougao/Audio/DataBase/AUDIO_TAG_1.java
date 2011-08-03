@@ -7,15 +7,15 @@ import android.os.Parcelable;
 public class AUDIO_TAG_1 implements Parcelable.Creator {
 
 	@Override
-	public Object createFromParcel(Parcel source) {
+	public AUDIO_TAG createFromParcel(Parcel source) {
 		// TODO Auto-generated method stub
-		return null;
+		return new AUDIO_TAG(source);
 	}
 
 	@Override
-	public Object[] newArray(int size) {
+	public AUDIO_TAG [] newArray(int size) {
 		// TODO Auto-generated method stub
-		return null;
+		return new AUDIO_TAG[size];
 	}
 
 }

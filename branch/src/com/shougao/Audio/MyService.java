@@ -9,18 +9,11 @@ import android.os.IBinder;
 
 public class MyService extends Service {
 
-	static int playState; //0. stop 1. playing 2. pause 
-	static final int PLAYMODE_ORDER = 1;
-	static final int PLAYMODE_SINGLE = 2;
-	static final int PLAYMODE_SHUFFLE = 3;
+//	static int playState; //0. stop 1. playing 2. pause 
+//	static final int PLAYMODE_ORDER = 1;
+//	static final int PLAYMODE_SINGLE = 2;
+//	static final int PLAYMODE_SHUFFLE = 3;
 	private MediaService mediaService = new MediaService();
-	private MediaPlayer mp = new MediaPlayer();
-
-	static {
-		playState = -1;
-	}
-
-
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -35,31 +28,13 @@ public class MyService extends Service {
 		
 	}
 
-	public void play() {
-		mp.reset();
-		System.out.println("DEBUG>>>play:");
-		try {
-			mp.setDataSource(getFile());
-			mp.prepare();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		mp.start();
-		playState = 1;
-	}
+	public void play() {}
 
 	public void next() {
 		// TODO Auto-generated method stub
-		if(playState == 1){
-			mp.stop();
-		}
+//		if(playState == 1){
+//			mp.stop();
+//		}
 			MediaService localMediaService = mediaService;
 //			int k = localMediaService.getRepeatMode();
 //			switch(int k){
@@ -88,10 +63,10 @@ public class MyService extends Service {
 		
 	}
 	
-	public String getFile() {
-		String path = null;
-		FileList fl = new FileList();
-		path = fl.getPath().get(0);
-		return path;
-	}
+//	public String getFile() {
+//		String path = null;
+//		FileList fl = new FileList();
+//		path = fl.getPath().get(0);
+//		return path;
+//	}
 }
