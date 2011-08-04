@@ -23,11 +23,12 @@ public class MyService extends Service {
 		return mediaService;
 	}
 	public boolean onUnbind(Intent intent){
+		System.out.println("debug...onUnbind");
 		return true;
 	}
 	
 	public void onDestroy(){
-		
+		System.out.println("debug...onDestroy");
 	}
 	
 	public void onStart(){

@@ -1,6 +1,7 @@
 package com.shougao.Audio;
 
 import java.io.IOException;
+import java.util.List;
 
 import com.shougao.Audio.DataBase.AUDIO_TAG;
 import com.shougao.Audio.DataBase.AudioDataTools;
@@ -67,9 +68,11 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	}
 
 	@Override
-	public AUDIO_TAG[] getPlayList() throws RemoteException {
+	public List<String> getPlayList() throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		FileList localFileList = new FileList();
+		
+		return localFileList.getFileNameList();
 	}
 
 	@Override
@@ -152,6 +155,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void next() throws RemoteException {
 		// TODO Auto-generated method stub
+		
 	}
 
 	@Override

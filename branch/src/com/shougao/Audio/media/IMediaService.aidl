@@ -16,7 +16,7 @@ AUDIO_TAG[] getCurrentPlayAudio();
 int getCurrentPlayIndex();
 int getDruation();
 int getMediaTime();
-AUDIO_TAG[] getPlayList();
+List<String> getPlayList();
 void play();
 void stop();
 void pause();

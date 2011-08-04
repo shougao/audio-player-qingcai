@@ -33,11 +33,12 @@ public class FileList {
 					}
 					FileContent fc = new FileContent();
 					fc.setFileName(file.getName());
+					mp3List.add(file.getName());
 					fc.setFilePath(file.getAbsolutePath());
 					fc.setParentsPath(file.getParent());
 					fileMap.put(file.getName(), fc);
 					id++;
-					System.out.println("=="+id);
+//					System.out.println("=="+id);
 				}
 			}
 		}
@@ -45,14 +46,13 @@ public class FileList {
 	
 	public ArrayList<String> getFileNameList() {
 		scanFile(SD_PATH);
-		Iterator iter = fileMap.entrySet().iterator();
-		while(iter.hasNext()){
-			Map.Entry entry = (Map.Entry)iter.next();
-			String key = (String) entry.getKey();
-			System.out.println(key);
-			mp3List.add(key);
-			FileContent value = (FileContent) entry.getValue();
-		}
+//		Iterator iter = fileMap.entrySet().iterator();
+//		while(iter.hasNext()){
+//			Map.Entry entry = (Map.Entry)iter.next();
+//			String key = (String) entry.getKey();
+//			mp3List.add(key);
+//			FileContent value = (FileContent) entry.getValue();
+//		}
 		return mp3List;
 	}
 	

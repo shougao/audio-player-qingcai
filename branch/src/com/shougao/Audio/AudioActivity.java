@@ -35,12 +35,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class AudioActivity extends Activity implements OnClickListener,
-		OnItemClickListener {
+public class AudioActivity extends Activity implements OnClickListener{
 	/** Called when the activity is first created. */
 	static int intPlayMode = 1;
 	static int intPlayState = 0; // 0 stop, 1play.
-	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric, IndMenu;
+	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
+			IndMenu;
 	private ImageView btnMain, vPlayMode, vPlay;
 	private IMediaService localMediaService;
 	private ListView musicListView;
@@ -55,7 +55,7 @@ public class AudioActivity extends Activity implements OnClickListener,
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
 		btnList = (ImageButton) findViewById(R.id.ImgList);
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
-		IndMenu = (ImageButton)findViewById(R.id.IndMenu);
+		IndMenu = (ImageButton) findViewById(R.id.IndMenu);
 		musicListView = (ListView) findViewById(R.id.MusicListView);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
 		vPlay = (ImageView) findViewById(R.id.imgPlay);
@@ -69,7 +69,16 @@ public class AudioActivity extends Activity implements OnClickListener,
 				mServiceConn, Context.BIND_AUTO_CREATE);
 
 	}
+//	musicListView.setOnItemClickListener();
 
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		System.out.println("onitemclick =================");
+		// TODO Auto-generated method stub
+		Toast.makeText(this, "onItemClick", Toast.LENGTH_LONG).show();
+		ListView lv = (ListView) arg0;
+		System.out.println(lv.getItemAtPosition(arg2));
+	}
+	
 	private ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -90,10 +99,10 @@ public class AudioActivity extends Activity implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btnPlay:
-			System.out.println("=========" + intPlayState);
+			// System.out.println("=========" + intPlayState);
 			switch (intPlayState) {
 			case 0:
-				System.out.println("========= 0  :" + intPlayState);
+				// System.out.println("========= 0  :" + intPlayState);
 				try {
 					localMediaService.play();
 				} catch (RemoteException e1) {
@@ -104,7 +113,7 @@ public class AudioActivity extends Activity implements OnClickListener,
 				intPlayState = 1;
 				break;
 			case 1:
-				System.out.println("=========1 :" + intPlayState);
+				// System.out.println("=========1 :" + intPlayState);
 				try {
 					localMediaService.pause();
 				} catch (RemoteException e1) {
@@ -126,9 +135,15 @@ public class AudioActivity extends Activity implements OnClickListener,
 
 		case R.id.ImgList:
 			System.out.println("DEBUG>>>ImgList");
-			adapter = new ArrayAdapter(getApplicationContext(),
-					R.layout.my_simple_list_item,
-					localFileList.getFileNameList());
+			try {
+				adapter = new ArrayAdapter(getApplicationContext(),
+						R.layout.my_simple_list_item,
+						localMediaService.getPlayList());
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			// localFileList.getFileNameList());
 			musicListView.setAdapter(adapter);
 			break;
 
@@ -189,55 +204,51 @@ public class AudioActivity extends Activity implements OnClickListener,
 			System.out.println("DEBUG>>> main acitvity thread"
 					+ Thread.currentThread().getId());
 			break;
-			
+
 		case R.id.IndMenu:
-			//menu 菜单， 添加about和exit
+			// menu 菜单， 添加about和exit
 			break;
 		}
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		// TODO Auto-generated method stub
-		ListView lv = (ListView)arg0;
-		System.out.println(lv.getItemAtPosition(arg2));
-	}
-	
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-        // TODO Auto-generated method stub
-        if(item.getItemId()==1){
-               finish();
-              }
-        return super.onMenuItemSelected(featureId, item);
-    }
+		// TODO Auto-generated method stub
+		if (item.getItemId() == 1) {
+			finish();
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/*
-		 * add()方法的四个参数，依次是：
-		 * 1、组别，如果不分组的话就写Menu.NONE,
-		 * 2、Id，这个很重要，Android根据这个Id来确定不同的菜单
-		 * 3、顺序，那个菜单现在在前面由这个参数的大小决定
+		 * add()方法的四个参数，依次是： 1、组别，如果不分组的话就写Menu.NONE,
+		 * 2、Id，这个很重要，Android根据这个Id来确定不同的菜单 3、顺序，那个菜单现在在前面由这个参数的大小决定
 		 * 4、文本，菜单的显示文本
 		 */
-		menu.add(Menu.NONE, Menu.FIRST + 1, 1, "about").setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(Menu.NONE, Menu.FIRST + 2, 2, "exit").setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(Menu.NONE, Menu.FIRST + 1, 1, "about").setIcon(
+				android.R.drawable.ic_menu_info_details);
+		menu.add(Menu.NONE, Menu.FIRST + 2, 2, "exit").setIcon(
+				android.R.drawable.ic_menu_close_clear_cancel);
 		return true;
 	}
-	
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case Menu.FIRST + 1:
-			Toast.makeText(this, "about"+"\n"+"mp3音乐播放器"+"\n"+"作者：张庆财", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, "about" + "\n" + "mp3音乐播放器" + "\n" + "作者：张庆财",
+					Toast.LENGTH_LONG).show();
 			break;
 		case Menu.FIRST + 2:
-			Toast.makeText(this, "exit", Toast.LENGTH_LONG).show();
-		unbindService(mServiceConn);
+			unbindService(mServiceConn);
+			finish();
 			break;
 		}
 
 		return false;
 	}
-	
-	public void onOptionsMenuClosed(Menu menu){
-		Toast.makeText(this, "欢迎使用！"+"tel:15010611780", Toast.LENGTH_LONG).show();
+
+	public void onOptionsMenuClosed(Menu menu) {
+		Toast.makeText(this, "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG)
+				.show();
 	}
 }

@@ -8,7 +8,8 @@
 		android:layout_alignParentTop="true"
 		android:layout_width="fill_parent"
 		android:background="#000000"
-		android:id="@id/ViewIndication" android:layout_height="50dip">
+		android:id="@id/ViewIndication"
+		android:layout_height="50dip">
 		<ImageView
 			android:id="@+id/imageView1"
 			android:src="@drawable/img_playback_bg"
@@ -25,21 +26,24 @@
 				android:layout_weight="1.0"
 				android:background="#00000000"
 				android:layout_height="wrap_content"
-				android:layout_width="wrap_content" android:scaleType="fitXY"></ImageButton>
+				android:layout_width="wrap_content"
+				android:scaleType="fitXY"></ImageButton>
 			<ImageButton
 				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
 				android:src="@drawable/xml_button_btn_press"
 				android:id="@id/ImgList"
 				android:layout_weight="1.0"
-				android:background="#00000000" android:scaleType="fitXY"></ImageButton>
+				android:background="#00000000"
+				android:scaleType="fitXY"></ImageButton>
 			<ImageButton
 				android:layout_height="wrap_content"
 				android:layout_width="wrap_content"
 				android:src="@drawable/xml_button_btn_press"
 				android:id="@id/ImgLyric"
 				android:layout_weight="1.0"
-				android:background="#00000000" android:scaleType="fitXY"></ImageButton>
+				android:background="#00000000"
+				android:scaleType="fitXY"></ImageButton>
 		</LinearLayout>
 		<LinearLayout
 			android:id="@+id/linearLayout2"
@@ -57,7 +61,8 @@
 					android:src="@drawable/img_buttom_bt_play"
 					android:scaleType="center"
 					android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:id="@id/ImgMain"></ImageView>
+					android:layout_width="fill_parent"
+					android:id="@id/ImgMain"></ImageView>
 			</LinearLayout>
 			<LinearLayout
 				android:id="@id/linearMid"
@@ -69,7 +74,8 @@
 					android:src="@drawable/img_buttom_bt_list"
 					android:scaleType="center"
 					android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:id="@id/ImgList"></ImageView>
+					android:layout_width="fill_parent"
+					android:id="@id/ImgList"></ImageView>
 			</LinearLayout>
 			<LinearLayout
 				android:id="@id/linearRight"
@@ -81,7 +87,8 @@
 					android:src="@drawable/img_buttom_bt_lrc"
 					android:scaleType="center"
 					android:layout_height="fill_parent"
-					android:layout_width="fill_parent" android:id="@id/ImgLyric"></ImageView>
+					android:layout_width="fill_parent"
+					android:id="@id/ImgLyric"></ImageView>
 			</LinearLayout>
 		</LinearLayout>
 	</RelativeLayout>
@@ -102,7 +109,8 @@
 				android:layout_width="30dip"
 				android:layout_centerInParent="true"
 				android:scaleType="fitXY"
-				android:layout_height="20dip" android:src="@drawable/icon_playmode_normal"></ImageView>
+				android:layout_height="20dip"
+				android:src="@drawable/icon_playmode_normal"></ImageView>
 			<ImageButton
 				android:src="@drawable/xml_playback_btn_press"
 				android:id="@id/IndPlayMode"
@@ -122,7 +130,8 @@
 				android:layout_height="fill_parent"
 				android:layout_width="fill_parent"
 				android:background="#00000000"
-				android:scaleType="fitXY" android:id="@id/btnPrev"></ImageButton>
+				android:scaleType="fitXY"
+				android:id="@id/btnPrev"></ImageButton>
 			<ImageView
 				android:src="@drawable/img_playback_bt_last"
 				android:id="@id/imgPrev"
@@ -185,7 +194,8 @@
 				android:layout_height="fill_parent"
 				android:layout_width="fill_parent"
 				android:background="#00000000"
-				android:scaleType="fitXY" android:id="@id/IndMenu"></ImageButton>
+				android:scaleType="fitXY"
+				android:id="@id/IndMenu"></ImageButton>
 			<ImageView
 				android:id="@id/ImgMenu"
 				android:src="@drawable/img_buttom_bt_menu"
@@ -195,7 +205,19 @@
 				android:layout_width="30dip"></ImageView>
 		</RelativeLayout>
 	</LinearLayout>
-	<LinearLayout android:orientation="vertical" android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_below="@id/ViewIndication" android:layout_alignParentLeft="true" android:layout_above="@id/PlayControlPanpelTop" android:layout_alignParentRight="true" android:id="@id/MusicListLay">
-		<ListView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@id/MusicListView"></ListView>
-	</LinearLayout>
+	<RelativeLayout
+		android:id="@id/MusicListLay"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/ViewIndication"
+		android:layout_alignParentLeft="true"
+		android:layout_above="@id/PlayControlPanpelTop"
+		android:layout_alignParentRight="true">
+		<ListView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			android:id="@id/MusicListView"
+			android:descendantFocusability="blocksDescendants"></ListView>
+	</RelativeLayout>
+
 </RelativeLayout>
