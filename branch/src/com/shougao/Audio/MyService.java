@@ -14,54 +14,26 @@ public class MyService extends Service {
 //	static final int PLAYMODE_SINGLE = 2;
 //	static final int PLAYMODE_SHUFFLE = 3;
 	private MediaService mediaService = new MediaService();
-	@Override
+	
+	public void onCreate(){
+		
+	}
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
 		return mediaService;
+	}
+	public boolean onUnbind(Intent intent){
+		return true;
+	}
+	
+	public void onDestroy(){
+		
 	}
 	
 	public void onStart(){
 		
 	}
-	
-	public void onCreate(){
-		
-	}
 
-	public void play() {}
-
-	public void next() {
-		// TODO Auto-generated method stub
-//		if(playState == 1){
-//			mp.stop();
-//		}
-			MediaService localMediaService = mediaService;
-//			int k = localMediaService.getRepeatMode();
-//			switch(int k){
-//			case PLAYMODE_ORDER:
-//			case PLAYMODE_SINGLE:
-//				
-//			case PLAYMODE_
-//			}
-//			if(k == )
-//			int i = localMediaService.getCurrentPlayIndex();
-//			int j = localMediaService.getTotalPlayNum();
-			
-	}
-
-	public void prev() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void pause() {
-		// TODO Auto-generated method stub
-		
-	}
-	public void pause1() {
-		// TODO Auto-generated method stub
-		
-	}
 	
 //	public String getFile() {
 //		String path = null;

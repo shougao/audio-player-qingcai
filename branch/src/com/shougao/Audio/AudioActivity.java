@@ -20,6 +20,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -37,12 +39,13 @@ public class AudioActivity extends Activity implements OnClickListener,
 		OnItemClickListener {
 	/** Called when the activity is first created. */
 	static int intPlayMode = 1;
-	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric;
-	private ImageView btnMain, vPlayMode;
+	static int intPlayState = 0; // 0 stop, 1play.
+	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric, IndMenu;
+	private ImageView btnMain, vPlayMode, vPlay;
 	private IMediaService localMediaService;
 	private ListView musicListView;
-	private ArrayAdapter<String> adapter;
-	private FileList fl = new FileList();
+	private ArrayAdapter<String> adapter = null;
+	private FileList localFileList = new FileList();
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,13 +55,16 @@ public class AudioActivity extends Activity implements OnClickListener,
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
 		btnList = (ImageButton) findViewById(R.id.ImgList);
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
+		IndMenu = (ImageButton)findViewById(R.id.IndMenu);
 		musicListView = (ListView) findViewById(R.id.MusicListView);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
+		vPlay = (ImageView) findViewById(R.id.imgPlay);
 		btnPlay.setOnClickListener(this);
 		btnPlayMode.setOnClickListener(this);
 		btnList.setOnClickListener(this);
 		btnNext.setOnClickListener(this);
 		ImgLyric.setOnClickListener(this);
+		IndMenu.setOnClickListener(this);
 		bindService(new Intent("com.shougao.Audio.REMOTE_SERVICE"),
 				mServiceConn, Context.BIND_AUTO_CREATE);
 
@@ -75,6 +81,8 @@ public class AudioActivity extends Activity implements OnClickListener,
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			// TODO Auto-generated method stub
+			localMediaService = null;
+			System.out.println("DEBUG>>>ServiceDisConnection.");
 		}
 	};
 
@@ -82,14 +90,31 @@ public class AudioActivity extends Activity implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btnPlay:
-			try {
-				localMediaService.play();
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			System.out.println("=========" + intPlayState);
+			switch (intPlayState) {
+			case 0:
+				System.out.println("========= 0  :" + intPlayState);
+				try {
+					localMediaService.play();
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				vPlay.setImageResource(R.drawable.img_playback_bt_pause);
+				intPlayState = 1;
+				break;
+			case 1:
+				System.out.println("=========1 :" + intPlayState);
+				try {
+					localMediaService.pause();
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				vPlay.setImageResource(R.drawable.img_playback_bt_play);
+				intPlayState = 0;
+				break;
 			}
-			break;
-
 		case R.id.btnNext:
 			try {
 				localMediaService.next();
@@ -102,18 +127,20 @@ public class AudioActivity extends Activity implements OnClickListener,
 		case R.id.ImgList:
 			System.out.println("DEBUG>>>ImgList");
 			adapter = new ArrayAdapter(getApplicationContext(),
-					R.layout.my_simple_list_item, fl.getMp3());
+					R.layout.my_simple_list_item,
+					localFileList.getFileNameList());
 			musicListView.setAdapter(adapter);
 			break;
-			
+
 		case R.id.IndPlayMode:
 			System.out.println("========");
 			intPlayMode = intPlayMode + 1;
 			intPlayMode = (intPlayMode % 4);
-			switch(intPlayMode){
+			switch (intPlayMode) {
 			case 1:
 				vPlayMode.setImageResource(R.drawable.icon_playmode_normal);
-				Toast.makeText(getApplicationContext(), "顺序播放", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "顺序播放",
+						Toast.LENGTH_SHORT).show();
 				try {
 					localMediaService.setRepeatMode();
 				} catch (RemoteException e) {
@@ -123,7 +150,8 @@ public class AudioActivity extends Activity implements OnClickListener,
 				break;
 			case 2:
 				vPlayMode.setImageResource(R.drawable.icon_playmode_repeat);
-				Toast.makeText(getApplicationContext(), "循环播放", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "循环播放",
+						Toast.LENGTH_SHORT).show();
 				try {
 					localMediaService.setRepeatMode();
 				} catch (RemoteException e) {
@@ -132,8 +160,10 @@ public class AudioActivity extends Activity implements OnClickListener,
 				}
 				break;
 			case 3:
-				vPlayMode.setImageResource(R.drawable.icon_playmode_repeat_single);
-				Toast.makeText(getApplicationContext(), "单曲重复", Toast.LENGTH_SHORT).show();
+				vPlayMode
+						.setImageResource(R.drawable.icon_playmode_repeat_single);
+				Toast.makeText(getApplicationContext(), "单曲重复",
+						Toast.LENGTH_SHORT).show();
 				try {
 					localMediaService.setRepeatMode();
 				} catch (RemoteException e) {
@@ -143,7 +173,8 @@ public class AudioActivity extends Activity implements OnClickListener,
 				break;
 			case 0:
 				vPlayMode.setImageResource(R.drawable.icon_playmode_shuffle);
-				Toast.makeText(getApplicationContext(), "随机播放", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "随机播放",
+						Toast.LENGTH_SHORT).show();
 				try {
 					localMediaService.setRepeatMode();
 				} catch (RemoteException e) {
@@ -152,48 +183,61 @@ public class AudioActivity extends Activity implements OnClickListener,
 				}
 				break;
 			}
-			
+
 		case R.id.ImgLyric:
 			System.out.println("========imglyric");
-			System.out.println("DEBUG>>> main acitvity thread" + Thread.currentThread().getId());
+			System.out.println("DEBUG>>> main acitvity thread"
+					+ Thread.currentThread().getId());
+			break;
+			
+		case R.id.IndMenu:
+			//menu 菜单， 添加about和exit
 			break;
 		}
 	}
 
-//	private void play() {
-//		// TODO Auto-generated method stub
-//		Parcel pc = Parcel.obtain();
-//		Parcel pc_reply = Parcel.obtain();
-//		try {
-//			System.out.println("DEBUG>>>pc" + pc.toString());
-//			System.out.println("DEBUG>>>pc_replay" + pc_reply.toString());
-//			ib.transact(1, pc, pc_reply, 0);
-//		} catch (RemoteException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
-//	private void next() {
-//		// TODO Auto-generated method stub
-//		Parcel pc = Parcel.obtain();
-//		Parcel pc_reply = Parcel.obtain();
-//		try {
-//			System.out.println("DEBUG>>>pc" + pc.toString());
-//			System.out.println("DEBUG>>>pc_replay" + pc_reply.toString());
-//			ib.transact(2, pc, pc_reply, 0);
-//		} catch (RemoteException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	@Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		// TODO Auto-generated method stub
+		ListView lv = (ListView)arg0;
+		System.out.println(lv.getItemAtPosition(arg2));
+	}
+	
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+        // TODO Auto-generated method stub
+        if(item.getItemId()==1){
+               finish();
+              }
+        return super.onMenuItemSelected(featureId, item);
+    }
+	public boolean onCreateOptionsMenu(Menu menu) {
+		/*
+		 * add()方法的四个参数，依次是：
+		 * 1、组别，如果不分组的话就写Menu.NONE,
+		 * 2、Id，这个很重要，Android根据这个Id来确定不同的菜单
+		 * 3、顺序，那个菜单现在在前面由这个参数的大小决定
+		 * 4、文本，菜单的显示文本
+		 */
+		menu.add(Menu.NONE, Menu.FIRST + 1, 1, "about").setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(Menu.NONE, Menu.FIRST + 2, 2, "exit").setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		return true;
+	}
+	
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case Menu.FIRST + 1:
+			Toast.makeText(this, "about"+"\n"+"mp3音乐播放器"+"\n"+"作者：张庆财", Toast.LENGTH_LONG).show();
+			break;
+		case Menu.FIRST + 2:
+			Toast.makeText(this, "exit", Toast.LENGTH_LONG).show();
+		unbindService(mServiceConn);
+			break;
+		}
+
+		return false;
+	}
+	
+	public void onOptionsMenuClosed(Menu menu){
+		Toast.makeText(this, "欢迎使用！"+"tel:15010611780", Toast.LENGTH_LONG).show();
 	}
 }
