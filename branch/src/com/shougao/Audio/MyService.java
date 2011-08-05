@@ -34,12 +34,4 @@ public class MyService extends Service {
 	public void onStart(){
 		
 	}
-
-	
-//	public String getFile() {
-//		String path = null;
-//		FileList fl = new FileList();
-//		path = fl.getPath().get(0);
-//		return path;
-//	}
 }

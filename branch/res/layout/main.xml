@@ -92,6 +92,24 @@
 			</LinearLayout>
 		</LinearLayout>
 	</RelativeLayout>
+	
+		<ViewGroup
+		android:id="@id/ViewFlipper"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_above="@id/PlayControlPanelTop"
+		android:layout_below="@id/ViewIndication">
+		<include
+			android:id="@id/frmMain"
+			layout="@layout/playlayout" />
+		<include
+			android:id="@id/frmList"
+			layout="@layout/listlayout" />
+		<include
+			android:id="@id/frmLyric"
+			layout="@layout/lyriclayout" />
+	</ViewGroup>
+	
 	<LinearLayout
 		android:layout_alignParentBottom="true"
 		android:layout_width="fill_parent"
@@ -205,6 +223,7 @@
 				android:layout_width="30dip"></ImageView>
 		</RelativeLayout>
 	</LinearLayout>
+	<!-- 
 	<RelativeLayout
 		android:id="@id/MusicListLay"
 		android:layout_width="wrap_content"
@@ -219,5 +238,5 @@
 			android:id="@id/MusicListView"
 			android:descendantFocusability="blocksDescendants"></ListView>
 	</RelativeLayout>
-
+	-->
 </RelativeLayout>

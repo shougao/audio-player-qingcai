@@ -34,4 +34,18 @@
     <item type="id" name="linearRight"></item>
     <item type="id" name="MusicListView"></item>
     <item name="MusicListLay" type="id"></item>
+    <item type="id" name="PlayList"></item>
+    <item type="id" name="frmMain"></item>
+    <item type="id" name="PlayControlPanelTop"></item>
+    <item type="id" name="ViewFlipper"></item>
+    <item type="id" name="LyricShow"></item>
+    <item type="id" name="frmList"></item>
+    <item type="id" name="frmLyric"></item>
+    <item type="id" name="RelativeLayoutPlayInfo"></item>
+    <item type="id" name="img_playinfo_bg"></item>
+    <item type="id" name="txtLapse"></item>
+    <item type="id" name="txtDuration"></item>
+    <item type="id" name="linearPlayInfo"></item>
+    <item type="id" name="skbGuage"></item>
+    <item type="id" name="seek_background"></item>
 </resources>

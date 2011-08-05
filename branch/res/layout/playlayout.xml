@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<RelativeLayout
+		android:layout_gravity="fill_horizontal|bottom|center"
+		android:id="@id/RelativeLayoutPlayInfo"
+		android:background="@drawable/img_playinfo_bg"
+		android:layout_width="fill_parent"
+		android:layout_height="60.0dip"
+		android:layout_alignParentBottom="true">
+		<TextView
+			android:textSize="14.0dip"
+			android:textStyle="bold"
+			android:textColor="#ffffffff"
+			android:gravity="center_vertical"
+			android:id="@id/txtLapse"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10.0dip"
+			android:layout_marginBottom="10.0dip"
+			android:text="00:00"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentBottom="true"
+			android:layout_centerVertical="true" />
+		<TextView
+			android:textSize="14.0dip"
+			android:textStyle="bold"
+			android:textColor="#ffffffff"
+			android:id="@id/txtDuration"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginRight="10.0dip"
+			android:layout_marginBottom="10.0dip"
+			android:text="00:00"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentBottom="true"
+			android:layout_centerVertical="true" />
+		<LinearLayout
+			android:gravity="center"
+			android:orientation="vertical"
+			android:id="@id/linearPlayInfo"
+			android:layout_width="fill_parent"
+			android:layout_height="30.0dip"
+			android:layout_marginBottom="0.0dip"
+			android:layout_toLeftOf="@id/txtDuration"
+			android:layout_toRightOf="@id/txtLapse"
+			android:layout_alignParentBottom="true">
+			<SeekBar
+				android:id="@id/skbGuage"
+				android:paddingLeft="5.0dip"
+				android:paddingTop="0.0dip"
+				android:paddingRight="5.0dip"
+				android:paddingBottom="0.0dip"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:max="0"
+				android:progress="0"
+				android:progressDrawable="@drawable/seek_background"
+				android:thumb="@drawable/img_none" />
+		</LinearLayout>
+		<!-- 
+		<com.sds.android.ttpod.component.LyricShow
+			android:id="@id/MiniLyricShow"
+			android:layout_width="fill_parent"
+			android:layout_height="30.0dip"
+			android:layout_marginLeft="5.0dip"
+			android:layout_marginTop="5.0dip"
+			android:layout_marginRight="5.0dip"
+			android:layout_alignParentTop="true"
+			ttpod:font_size="16"
+			ttpod:highlight_color="#ff2af5ee"
+			ttpod:foreground_color="#ffffffff"
+			ttpod:display_method="272"
+			xmlns:ttpod="http://schemas.android.com/apk/res/com.sds.android.ttpod" />
+			 -->
+	</RelativeLayout>
+</FrameLayout>
+

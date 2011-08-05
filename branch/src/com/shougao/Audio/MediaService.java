@@ -135,6 +135,10 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void stop() throws RemoteException {
 		// TODO Auto-generated method stub
+		mp.stop();
+		mp.reset();
+		mp.release();
+		
 	}
 
 	@Override

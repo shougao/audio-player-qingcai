@@ -239,11 +239,17 @@ public class AudioActivity extends Activity implements OnClickListener{
 					Toast.LENGTH_LONG).show();
 			break;
 		case Menu.FIRST + 2:
+			try {
+				localMediaService.stop();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			unbindService(mServiceConn);
+		System.out.println("=======unbindService");
 			finish();
 			break;
 		}
-
 		return false;
 	}
 
