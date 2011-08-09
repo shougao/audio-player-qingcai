@@ -93,7 +93,7 @@
 		</LinearLayout>
 	</RelativeLayout>
 	
-		<ViewGroup
+		<com.shougao.Audio.component.ScrollableViewGroup
 		android:id="@id/ViewFlipper"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
@@ -108,7 +108,7 @@
 		<include
 			android:id="@id/frmLyric"
 			layout="@layout/lyriclayout" />
-	</ViewGroup>
+	</com.shougao.Audio.component.ScrollableViewGroup>
 	
 	<LinearLayout
 		android:layout_alignParentBottom="true"

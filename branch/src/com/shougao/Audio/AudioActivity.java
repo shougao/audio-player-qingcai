@@ -56,7 +56,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 		btnList = (ImageButton) findViewById(R.id.ImgList);
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
 		IndMenu = (ImageButton) findViewById(R.id.IndMenu);
-		musicListView = (ListView) findViewById(R.id.MusicListView);
+		musicListView = (ListView) findViewById(R.id.PlayList);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
 		vPlay = (ImageView) findViewById(R.id.imgPlay);
 		btnPlay.setOnClickListener(this);
@@ -133,7 +133,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 			}
 			break;
 
-		case R.id.ImgList:
+		case R.id.PlayList:
 			System.out.println("DEBUG>>>ImgList");
 			try {
 				adapter = new ArrayAdapter(getApplicationContext(),
