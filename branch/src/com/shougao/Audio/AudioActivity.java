@@ -12,8 +12,10 @@ import com.shougao.Audio.PlayMode.SinglePlayMode;
 import com.shougao.Audio.media.IMediaService;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -33,9 +35,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class AudioActivity extends Activity implements OnClickListener{
+public class AudioActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 	static int intPlayMode = 1;
 	static int intPlayState = 0; // 0 stop, 1play.
@@ -47,6 +50,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 	private ArrayAdapter<String> adapter = null;
 	private FileList localFileList = new FileList();
 
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
@@ -69,7 +73,10 @@ public class AudioActivity extends Activity implements OnClickListener{
 				mServiceConn, Context.BIND_AUTO_CREATE);
 
 	}
-//	musicListView.setOnItemClickListener();
+
+	public void onstart() {
+
+	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		System.out.println("onitemclick =================");
@@ -78,7 +85,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 		ListView lv = (ListView) arg0;
 		System.out.println(lv.getItemAtPosition(arg2));
 	}
-	
+
 	private ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -99,7 +106,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btnPlay:
-			// System.out.println("=========" + intPlayState);
+			System.out.println("=========" + intPlayState);
 			switch (intPlayState) {
 			case 0:
 				// System.out.println("========= 0  :" + intPlayState);
@@ -125,6 +132,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 				break;
 			}
 		case R.id.btnNext:
+			System.out.println("DEBUG>>>next");
 			try {
 				localMediaService.next();
 			} catch (RemoteException e) {
@@ -133,18 +141,31 @@ public class AudioActivity extends Activity implements OnClickListener{
 			}
 			break;
 
-		case R.id.PlayList:
-			System.out.println("DEBUG>>>ImgList");
+		case R.id.ImgList:
+			System.out
+					.println("DEBUG>>>ImgList===================================================");
+
 			try {
-				adapter = new ArrayAdapter(getApplicationContext(),
-						R.layout.my_simple_list_item,
+				adapter = new ArrayAdapter<String>(getApplicationContext(),
+						android.R.layout.simple_list_item_1,
 						localMediaService.getPlayList());
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			// localFileList.getFileNameList());
 			musicListView.setAdapter(adapter);
+			// for(String music: localMediaService.getPlayList()){
+			// System.out.println("getPlayList"+music);
+			// }
+			// localFileList.getFileNameList());
+			// adapter = new ArrayAdapter<String>(this, R.layout.listlayout,
+			// list);
+			// setContentView(musicListView);
+//			Simple_list_item_1 每项有一个 TextView
+//			Simple_list_item_2 每项有两个 TextView
+//			Simple_list_item_checked 带 CheckView 的项
+//			Simple_list_item_multiple_choise 每项有一个 TextView 并可以多选
+//			Simple_list_item_single_choice 每项有一个 TextView ，但只能进行单选。
 			break;
 
 		case R.id.IndPlayMode:
@@ -198,6 +219,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 				}
 				break;
 			}
+			break;
 
 		case R.id.ImgLyric:
 			System.out.println("========imglyric");
@@ -207,8 +229,33 @@ public class AudioActivity extends Activity implements OnClickListener{
 
 		case R.id.IndMenu:
 			// menu 菜单， 添加about和exit
+			showInfo();	
 			break;
 		}
+	}
+	
+	public void showInfo(){
+		new AlertDialog.Builder(this)
+		.setTitle("info")
+		.setMessage("确认退出？")
+		.setPositiveButton("确认", new DialogInterface.OnClickListener(){
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Toast.makeText(getApplicationContext(), "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG).show();
+				unbindService(mServiceConn);
+				System.out.println("=======unbindService");
+				finish();
+				
+			}
+		}).setNegativeButton("返回", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				System.out.println("返回");
+			}
+		})
+		.show();
+		
 	}
 
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
@@ -246,7 +293,7 @@ public class AudioActivity extends Activity implements OnClickListener{
 				e.printStackTrace();
 			}
 			unbindService(mServiceConn);
-		System.out.println("=======unbindService");
+			System.out.println("=======unbindService");
 			finish();
 			break;
 		}

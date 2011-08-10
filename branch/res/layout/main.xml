@@ -92,7 +92,7 @@
 			</LinearLayout>
 		</LinearLayout>
 	</RelativeLayout>
-	
+			<!-- -->
 		<com.shougao.Audio.component.ScrollableViewGroup
 		android:id="@id/ViewFlipper"
 		android:layout_width="fill_parent"
@@ -101,22 +101,21 @@
 		android:layout_below="@id/ViewIndication">
 		<include
 			android:id="@id/frmMain"
-			layout="@layout/playlayout" />
+			layout="@layout/listlayout" />
 		<include
 			android:id="@id/frmList"
-			layout="@layout/listlayout" />
+			layout="@layout/playlayout" />
 		<include
 			android:id="@id/frmLyric"
 			layout="@layout/lyriclayout" />
 	</com.shougao.Audio.component.ScrollableViewGroup>
-	
+				 
 	<LinearLayout
 		android:layout_alignParentBottom="true"
 		android:layout_width="fill_parent"
 		android:background="@drawable/img_playback_bg"
 		android:layout_alignParentLeft="true"
-		android:id="@id/PlayControlPanpelTop"
-		android:layout_height="50dip">
+		android:layout_height="50dip" android:id="@id/PlayControlPanelTop">
 		<RelativeLayout
 			android:id="@id/layoutPlayMode"
 			android:layout_height="fill_parent"
