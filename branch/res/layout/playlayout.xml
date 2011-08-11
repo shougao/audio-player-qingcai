@@ -60,21 +60,6 @@
 				android:progressDrawable="@drawable/seek_background"
 				android:thumb="@drawable/img_none" />
 		</LinearLayout>
-		<!-- 
-		<com.sds.android.ttpod.component.LyricShow
-			android:id="@id/MiniLyricShow"
-			android:layout_width="fill_parent"
-			android:layout_height="30.0dip"
-			android:layout_marginLeft="5.0dip"
-			android:layout_marginTop="5.0dip"
-			android:layout_marginRight="5.0dip"
-			android:layout_alignParentTop="true"
-			ttpod:font_size="16"
-			ttpod:highlight_color="#ff2af5ee"
-			ttpod:foreground_color="#ffffffff"
-			ttpod:display_method="272"
-			xmlns:ttpod="http://schemas.android.com/apk/res/com.sds.android.ttpod" />
-			 -->
 	</RelativeLayout>
 </FrameLayout>
 

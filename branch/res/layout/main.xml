@@ -22,6 +22,7 @@
 			android:layout_height="40dip">
 			<ImageButton
 				android:src="@drawable/xml_button_btn_press"
+				android:focusable="false"
 				android:id="@id/IndMain"
 				android:layout_weight="1.0"
 				android:background="#00000000"
@@ -30,6 +31,7 @@
 				android:scaleType="fitXY"></ImageButton>
 			<ImageButton
 				android:layout_width="wrap_content"
+				android:focusable="false"
 				android:layout_height="wrap_content"
 				android:src="@drawable/xml_button_btn_press"
 				android:id="@id/ImgList"
@@ -38,6 +40,7 @@
 				android:scaleType="fitXY"></ImageButton>
 			<ImageButton
 				android:layout_height="wrap_content"
+				android:focusable="false"
 				android:layout_width="wrap_content"
 				android:src="@drawable/xml_button_btn_press"
 				android:id="@id/ImgLyric"
@@ -101,10 +104,10 @@
 		android:layout_below="@id/ViewIndication">
 		<include
 			android:id="@id/frmMain"
-			layout="@layout/listlayout" />
+			layout="@layout/playlayout" />
 		<include
 			android:id="@id/frmList"
-			layout="@layout/playlayout" />
+			layout="@layout/listlayout" />
 		<include
 			android:id="@id/frmLyric"
 			layout="@layout/lyriclayout" />
@@ -130,6 +133,7 @@
 				android:src="@drawable/icon_playmode_normal"></ImageView>
 			<ImageButton
 				android:src="@drawable/xml_playback_btn_press"
+				android:focusable="false"
 				android:id="@id/IndPlayMode"
 				android:layout_height="fill_parent"
 				android:layout_width="fill_parent"
@@ -143,6 +147,7 @@
 			android:layout_weight="1.0">
 			<ImageButton
 				android:src="@drawable/xml_playback_btn_press"
+				android:focusable="false"
 				android:layout_alignParentLeft="true"
 				android:layout_height="fill_parent"
 				android:layout_width="fill_parent"
@@ -164,6 +169,7 @@
 			android:layout_weight="1.0">
 			<ImageButton
 				android:src="@drawable/xml_playback_btn_press"
+				android:focusable="false"
 				android:layout_alignParentLeft="true"
 				android:id="@id/btnPlay"
 				android:scaleType="fitXY"
@@ -186,6 +192,7 @@
 			android:layout_weight="1.0">
 			<ImageButton
 				android:src="@drawable/xml_playback_btn_press"
+				android:focusable="false"
 				android:layout_alignParentLeft="true"
 				android:id="@id/btnNext"
 				android:layout_height="fill_parent"
@@ -207,6 +214,7 @@
 			android:layout_weight="1.0">
 			<ImageButton
 				android:src="@drawable/xml_playback_btn_press"
+				android:focusable="false"
 				android:layout_alignParentLeft="true"
 				android:layout_height="fill_parent"
 				android:layout_width="fill_parent"

@@ -2,6 +2,7 @@ package com.shougao.Audio;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.shougao.Audio.DataBase.FileList;
@@ -35,6 +36,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,11 +51,17 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private ListView musicListView;
 	private ArrayAdapter<String> adapter = null;
 	private FileList localFileList = new FileList();
+	private SeekBar mSeekBar= null;
+	private TextView currentProcessText = null;
+	private TextView currentDurationText = null;
 
+	Context mContext;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		mContext = this;
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
@@ -61,6 +69,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
 		IndMenu = (ImageButton) findViewById(R.id.IndMenu);
 		musicListView = (ListView) findViewById(R.id.PlayList);
+		musicListView.setOnItemClickListener(onItemClickListenerClick);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
 		vPlay = (ImageView) findViewById(R.id.imgPlay);
 		btnPlay.setOnClickListener(this);
@@ -71,21 +80,41 @@ public class AudioActivity extends Activity implements OnClickListener {
 		IndMenu.setOnClickListener(this);
 		bindService(new Intent("com.shougao.Audio.REMOTE_SERVICE"),
 				mServiceConn, Context.BIND_AUTO_CREATE);
-
+		mSeekBar = (SeekBar)findViewById(R.id.skbGuage);
+		currentProcessText = (TextView)findViewById(R.id.txtLapse);
+		currentDurationText = (TextView)findViewById(R.id.txtDuration);
+		mSeekBar.setOnClickListener(onClickListenerd);
 	}
 
-	public void onstart() {
+	
+	View.OnClickListener onClickListenerd = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+	/* 
+	 * onItemClick 参数：
+	 * AdapterView<?> arg0代表向spinner中加载的一系列字符串，是一个适配器，是字符串和Spinner之间的桥梁
+	 *  如果需要访问与被选项相关的数据，执行程序可以调用getItemAtPosition(position)。
+	 *		parent  发生点击动作的AdapterView。
+	 *		view 在AdapterView中被点击的视图(它是由adapter提供的一个视图)。
+	 *		position　视图在adapter中的位置。
+	 *		id 被点击元素的行id。
+	 */
+	OnItemClickListener onItemClickListenerClick = new OnItemClickListener() {
 
-	}
-
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		System.out.println("onitemclick =================");
-		// TODO Auto-generated method stub
-		Toast.makeText(this, "onItemClick", Toast.LENGTH_LONG).show();
-		ListView lv = (ListView) arg0;
-		System.out.println(lv.getItemAtPosition(arg2));
-	}
-
+		@Override
+		public void onItemClick(AdapterView<?> listView, View v, int position, long id) {
+			System.out.println("!!!!!" + listView.getItemAtPosition(position).toString());//获得点击的文件名字
+			Toast.makeText(mContext, "!!!xxx!!!" + position  +","+ id, Toast.LENGTH_LONG).show();
+		}
+	};
+	
+	//监听拖动条
 	private ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
