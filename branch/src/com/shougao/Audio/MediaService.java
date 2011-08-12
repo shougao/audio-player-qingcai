@@ -14,6 +14,7 @@ import com.shougao.Audio.PlayMode.ShufflePlayMode;
 import com.shougao.Audio.PlayMode.SinglePlayMode;
 
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.widget.ImageView;
@@ -25,11 +26,16 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	static final int PAUSE = 2;
 	static final int STOP = 0;
 	static int intPlayMode = 1;
-	static final int PLAYMODE_NORMAL = 1;
-	static final int PLAYMODE_ORDER = 2;
-	static final int PLAYMODE_SINGLE = 3;
-	static final int PLAYMODE_SHUFFLE = 4;
+	static final int PLAYMODE_NORMAL = 1;//循环播放
+	static final int PLAYMODE_ORDER = 2;//顺序播放
+	static final int PLAYMODE_SINGLE = 3;//单曲重复
+	static final int PLAYMODE_SHUFFLE = 4;//随机播放
 	private MediaPlayer mp = new MediaPlayer();
+	FileList audioFileList = new FileList();
+	private static int markFirstPlay = 1;  //标记是不是第一次播放文件，1. 第一次播放列表第一个文件
+	private static int markSelectedPlay = 0; //标记是不是选择播放，1， 选择播放。0.默认不选择播放。
+	private static String passSelectedFile = null;
+	private static int durationTime = 0;
 
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
@@ -44,7 +50,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	}
 
 	@Override
-	public AUDIO_TAG[] getCurrentPlayAudio() throws RemoteException {
+	public String getCurrentPlayAudio() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -56,9 +62,9 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	}
 
 	@Override
-	public int getDruation() throws RemoteException {
+	public int getDuration() throws RemoteException {
 		// TODO Auto-generated method stub
-		return 0;
+		return durationTime;
 	}
 
 	@Override
@@ -70,9 +76,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public List<String> getPlayList() throws RemoteException {
 		// TODO Auto-generated method stub
-		FileList localFileList = new FileList();
-		
-		return localFileList.getFileNameList();
+		return audioFileList.getFileNameList();
 	}
 
 	@Override
@@ -87,12 +91,20 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		// String fileName = localFile.getFileNameList().get(i);
 		// String filePath = localFile.getFilePath(fileName);
 		// }
+		String fileName = null;
+		String filePath = null;
 		if (playState == -1) {
-			mp.reset();
-			int i = 1;
-			FileList localFile = new FileList();
-			String fileName = localFile.getFileNameList().get(i);
-			String filePath = localFile.getFilePath(fileName);
+			//第一次播放音乐
+			if (markFirstPlay == 1) {
+				fileName = audioFileList.getFileNameList().get(0);
+				filePath = audioFileList.getFilePath(fileName);
+				markFirstPlay = 0;
+			} 
+			//播放选择的音乐文件
+			if(markSelectedPlay == 1){
+				filePath = audioFileList.getFilePath(passSelectedFile);
+				markSelectedPlay = 0;
+			}
 			try {
 				mp.setDataSource(filePath);
 				mp.prepare();
@@ -109,27 +121,44 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			playState = 0;
 		}
 		if (playState == 0) {
-//			mp.reset();
-//			int i = 1;
-//			FileList localFile = new FileList();
-//			String fileName = localFile.getFileNameList().get(i);
-//			String filePath = localFile.getFilePath(fileName);
-//			try {
-//				mp.setDataSource(filePath);
-//				mp.prepare();
-//			} catch (IllegalArgumentException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IllegalStateException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+			// mp.reset();
+			// int i = 1;
+			// FileList localFile = new FileList();
+			// String fileName = localFile.getFileNameList().get(i);
+			// String filePath = localFile.getFilePath(fileName);
+			// try {
+			// mp.setDataSource(filePath);
+			// mp.prepare();
+			// } catch (IllegalArgumentException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// } catch (IllegalStateException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// } catch (IOException e) {
+			// // TODO Auto-generated catch block
+			// e.printStackTrace();
+			// }
+			setDuration();
 			mp.start();
 			playState = 1;
 		}
+		mp.setOnCompletionListener(new OnCompletionListener(){
+
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				// TODO Auto-generated method stub
+				try {
+					if(getRepeatMode() == PLAYMODE_NORMAL){
+						play();
+					}
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
 	}
 
 	@Override
@@ -137,8 +166,6 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		// TODO Auto-generated method stub
 		mp.stop();
 		mp.reset();
-		mp.release();
-		
 	}
 
 	@Override
@@ -173,8 +200,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	public int getRepeatMode() throws RemoteException {
 		CurrentPlayMode localPlayMode = new CurrentPlayMode();
 		// localPlayMode.setPlayMode(new OrderPlayMode());
-		int i = localPlayMode.getPlayMode();
-		System.out.println("=======:" + i);
+//		int i = localPlayMode.getPlayMode();
+//		System.out.println("=======:" + i);
 		return 0;
 	}
 
@@ -187,6 +214,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public int getTotalPlayNum() throws RemoteException {
 		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
@@ -249,4 +277,49 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
 	}
 
+	@Override
+	public void passSelectedFile(String paramStr) throws RemoteException {
+		// TODO Auto-generated method stub
+		playState = -1;
+		markSelectedPlay = 1;
+		passSelectedFile = paramStr;
+		stop();
+		play();
+	}
+
+	@Override
+	public void release() throws RemoteException {
+		// TODO Auto-generated method stub
+		mp.release();
+	}
+
+	@Override
+	public void initPlayer() throws RemoteException {
+		// TODO Auto-generated method stub
+		mp.reset();
+		markFirstPlay = 1;
+	}
+
+	@Override
+	public void setDuration() throws RemoteException {
+		// TODO Auto-generated method stub
+		durationTime = mp.getDuration();
+	}
+
+	@Override
+	public int getCurrentProcess() throws RemoteException {
+		// TODO Auto-generated method stub
+		return mp.getCurrentPosition();
+	}
+
+	/*
+	 *  通过seekbar拖动获得seek值(non-Javadoc)
+	 *  (non-Javadoc)
+	 * @see com.shougao.Audio.media.IMediaService#seek(int)
+	 */
+	@Override
+	public void seek(int paramInt) throws RemoteException {
+		// TODO Auto-generated method stub
+		mp.seekTo(paramInt);
+	}
 }

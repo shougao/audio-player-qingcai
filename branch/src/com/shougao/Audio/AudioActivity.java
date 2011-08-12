@@ -20,6 +20,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
@@ -37,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +47,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	static int intPlayMode = 1;
 	static int intPlayState = 0; // 0 stop, 1play.
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
-			IndMenu;
+			IndMenu, btnPrev;
 	private ImageView btnMain, vPlayMode, vPlay;
 	private IMediaService localMediaService;
 	private ListView musicListView;
@@ -54,7 +56,8 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private SeekBar mSeekBar= null;
 	private TextView currentProcessText = null;
 	private TextView currentDurationText = null;
-
+	private static int totalTime; 
+	private static Handler mPercentHandler = new Handler();
 	Context mContext;
 	
 	@Override
@@ -64,12 +67,13 @@ public class AudioActivity extends Activity implements OnClickListener {
 		mContext = this;
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
+		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
 		btnList = (ImageButton) findViewById(R.id.ImgList);
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
 		IndMenu = (ImageButton) findViewById(R.id.IndMenu);
 		musicListView = (ListView) findViewById(R.id.PlayList);
-		musicListView.setOnItemClickListener(onItemClickListenerClick);
+		musicListView.setOnItemClickListener(musicListOnItemClickListenerClick);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
 		vPlay = (ImageView) findViewById(R.id.imgPlay);
 		btnPlay.setOnClickListener(this);
@@ -83,38 +87,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 		mSeekBar = (SeekBar)findViewById(R.id.skbGuage);
 		currentProcessText = (TextView)findViewById(R.id.txtLapse);
 		currentDurationText = (TextView)findViewById(R.id.txtDuration);
-		mSeekBar.setOnClickListener(onClickListenerd);
-	}
-
-	
-	View.OnClickListener onClickListenerd = new View.OnClickListener() {
+		mSeekBar.setOnSeekBarChangeListener(mSeekBarOnClickListener);
 		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			
-		}
-	};
+	}
 	
-	/* 
-	 * onItemClick 参数：
-	 * AdapterView<?> arg0代表向spinner中加载的一系列字符串，是一个适配器，是字符串和Spinner之间的桥梁
-	 *  如果需要访问与被选项相关的数据，执行程序可以调用getItemAtPosition(position)。
-	 *		parent  发生点击动作的AdapterView。
-	 *		view 在AdapterView中被点击的视图(它是由adapter提供的一个视图)。
-	 *		position　视图在adapter中的位置。
-	 *		id 被点击元素的行id。
-	 */
-	OnItemClickListener onItemClickListenerClick = new OnItemClickListener() {
-
-		@Override
-		public void onItemClick(AdapterView<?> listView, View v, int position, long id) {
-			System.out.println("!!!!!" + listView.getItemAtPosition(position).toString());//获得点击的文件名字
-			Toast.makeText(mContext, "!!!xxx!!!" + position  +","+ id, Toast.LENGTH_LONG).show();
-		}
-	};
-	
-	//监听拖动条
 	private ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -131,6 +107,118 @@ public class AudioActivity extends Activity implements OnClickListener {
 		}
 	};
 
+	OnSeekBarChangeListener mSeekBarOnClickListener = new OnSeekBarChangeListener(){
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress,
+				boolean fromUser) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			// TODO Auto-generated method stub
+			int process = mSeekBar.getProgress();
+			int duration = 0;
+			try {
+				duration = localMediaService.getDuration();
+				localMediaService.seek(duration * process/100);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	};
+
+	public void updateSeekBar(){
+		mPercentHandler.post(start);
+	}
+	Runnable start = new Runnable(){
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			mPercentHandler.post(updateSeekbar);
+		}
+	};
+	
+	Runnable updateSeekbar = new Runnable(){
+		
+		@Override
+		public void run() {
+			String value = null;
+			int position = 0;
+			// TODO Auto-generated method stub
+			try {
+				position = localMediaService.getCurrentProcess()/1000;//当前播放位置
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mSeekBar.setProgress(100*position/totalTime);
+			if((position%60 < 9)||(position%60 == 9)){
+				value = (String.valueOf(position/60) +":"+ "0" + String.valueOf(position%60));
+			}else{
+				value = (String.valueOf(position/60) +":"+ String.valueOf(position%60));
+			}
+			currentProcessText.setText(value);
+			mPercentHandler.postDelayed(updateSeekbar, 1000);
+		}
+	};
+	
+	/* 
+	 * onItemClick 参数：
+	 * AdapterView<?> arg0代表向spinner中加载的一系列字符串，是一个适配器，是字符串和Spinner之间的桥梁
+	 *  如果需要访问与被选项相关的数据，执行程序可以调用getItemAtPosition(position)。
+	 *		parent  发生点击动作的AdapterView。
+	 *		view 在AdapterView中被点击的视图(它是由adapter提供的一个视图)。
+	 *		position　视图在adapter中的位置。
+	 *		id 被点击元素的行id。
+	 */
+	OnItemClickListener musicListOnItemClickListenerClick = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> listView, View v, int position, long id) {
+			String paramStr = listView.getItemAtPosition(position).toString();
+//			System.out.println("!!!!!" + listView.getItemAtPosition(position).toString());//获得点击的文件名字
+//			Toast.makeText(mContext, "!!!xxx!!!" + position  +","+ id, Toast.LENGTH_LONG).show();
+			try {
+				localMediaService.passSelectedFile(paramStr);
+				updateDurationTime();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	};
+	
+	/*
+	 * 更新播放文件持续时间。
+	 * @author:zhangqingcai0815@gmail.com
+	 */
+	private void updateDurationTime() {
+		// TODO Auto-generated method stub
+		String duration = null;
+		try {
+			totalTime = localMediaService.getDuration()/1000;
+		} catch (RemoteException e3) {
+			// TODO Auto-generated catch block
+			e3.printStackTrace();
+		}
+		if((totalTime%60 <9)||(totalTime%60 == 9)){
+			duration = String.valueOf(totalTime/60)+":"+"0" + String.valueOf(totalTime%60);
+		}else{
+			duration = String.valueOf(totalTime/60)+":"+String.valueOf(totalTime%60);
+		}
+		currentDurationText.setText(duration);
+	}
+	//监听拖动条
+
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -145,6 +233,8 @@ public class AudioActivity extends Activity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				updateSeekBar();
+				updateDurationTime();
 				vPlay.setImageResource(R.drawable.img_playback_bt_pause);
 				intPlayState = 1;
 				break;
@@ -168,6 +258,18 @@ public class AudioActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			updateDurationTime();
+			break;
+			
+		case R.id.btnPrev:
+			System.out.println("DEBUG>>>prevent");
+			try {
+				localMediaService.prev();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			updateDurationTime();
 			break;
 
 		case R.id.ImgList:
@@ -317,6 +419,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		case Menu.FIRST + 2:
 			try {
 				localMediaService.stop();
+				localMediaService.release();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
