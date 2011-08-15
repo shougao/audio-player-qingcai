@@ -82,6 +82,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		btnPlayMode.setOnClickListener(this);
 		btnList.setOnClickListener(this);
 		btnNext.setOnClickListener(this);
+		btnPrev.setOnClickListener(this);
 		ImgLyric.setOnClickListener(this);
 		IndMenu.setOnClickListener(this);
 		bindService(new Intent("com.shougao.Audio.REMOTE_SERVICE"),
@@ -231,7 +232,8 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> listView, View v, int position, long id) {
-//			String paramInt = listView.getItemAtPosition(position).toString();
+//			String paramStr = listView.getItemAtPosition(position).toString();
+//			int i = Integer.parseInt(paramStr.substring(0, paramStr.indexOf(".")));
 //			System.out.println("!!!!!" + listView.getItemAtPosition(position).toString());//获得点击的文件名字
 //			Toast.makeText(mContext, "!!!xxx!!!" + position  +","+ id, Toast.LENGTH_LONG).show();
 			System.out.println("!!!!!position:" + position);
@@ -314,13 +316,15 @@ public class AudioActivity extends Activity implements OnClickListener {
 			
 		case R.id.btnPrev:
 			System.out.println("DEBUG>>>prevent");
-			try {
-				localMediaService.prev();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			updateDurationTime();
+			CurrentPlayMode pm = new CurrentPlayMode();
+			System.out.println(":" + pm.getPlayMode());
+//			try {
+//				localMediaService.prev();
+//			} catch (RemoteException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			updateDurationTime();
 			break;
 
 		case R.id.ImgList:
