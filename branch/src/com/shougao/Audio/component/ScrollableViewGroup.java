@@ -14,6 +14,10 @@ import android.view.View.MeasureSpec;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Scroller;
 
+/*
+ * 参考android源码，workspace.java
+ * android lanuch效果。
+ */
 public class ScrollableViewGroup extends ViewGroup {
 
 	private Scroller mScroller;
@@ -68,48 +72,12 @@ public class ScrollableViewGroup extends ViewGroup {
 		this.mTouchSlop = j;// 表示需要滑动多少距离的时候才翻到下一页
 	}
 
-	// @Override
-	// protected void onLayout(boolean changed, int l, int t, int r, int b) {
-	// Log.e(TAG, "onLayout" + changed);
-	// // TODO Auto-generated method stub
-	// // 设置布局，将子视图顺序横屏排列
-	// // 显示每一个chlid view的layout，在之前需要测量measure
-	// int childLeft = 0;
-	// System.out.println("getChildCount========="+getChildCount());
-	// for(int i=0; i<getChildCount(); ++i){
-	// View childView = getChildAt(i);
-	// if(childView.getVisibility() != View.GONE){
-	// int childWidth = childView.getMeasuredWidth();
-	// System.out.println("childLeft,childWidth,childView.getMeasuredHeight()========="+childLeft+","
-	// +childWidth + ","+ childView.getMeasuredHeight());
-	// childView.layout(childLeft, 0, childWidth + childLeft,
-	// childView.getMeasuredHeight());
-	// childLeft = childLeft + childWidth;
-	// System.out.println("new  childLeft========="+childLeft);
-	// }
-	// }
-	// }
 
-	// protected void onLayout(boolean paramBoolean, int paramInt1, int
-	// paramInt2, int paramInt3, int paramInt4)
-	// {
-	// int i = 0;
-	// int j = getChildCount();
-	// for (int k = 0; ; ++k)
-	// {
-	// if (k >= j)
-	// return;
-	// View localView = getChildAt(k);
-	// if (localView.getVisibility() == View.GONE)
-	// continue;
-	// int l = localView.getMeasuredWidth();
-	// int i1 = i + l;
-	// int i2 = localView.getMeasuredHeight();
-	// localView.layout(i, 0, i1, i2);
-	// int i3 = i + l;
-	// }
-	// }
-	//
+//	  设置布局，将子视图顺序横屏排列
+//	  显示每一个chlid view的layout，在之前需要测量measure
+
+
+
 	@Override
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {
 		// TODO Auto-generated method stub
@@ -130,48 +98,10 @@ public class ScrollableViewGroup extends ViewGroup {
 				// System.out.println("new  childLeft========="+childLeft);
 			}
 		}
-		// }
 	}
 
-	// protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec){
-	// //设置屏幕的大小，每个值由每个childView自己设定,主要的类MeasureSpec类
-	// super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-	// int width = MeasureSpec.getSize(widthMeasureSpec);
-	// //int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-	// //int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-	// // The children are given the same width and height as the workspace
-	// int count = getChildCount();
-	// for(int i=0; i<count; i++){
-	// getChildAt(i).measure(widthMeasureSpec, heightMeasureSpec);
-	// }
-	// if (mFirstLayout) {
-	// scrollTo(mCurrentScreen * width, 0);
-	// mFirstLayout = false;
-	// }
-	// }
-
-	// protected void onMeasure(int paramInt1, int paramInt2)
-	// {
-	// int i = 0;
-	// super.onMeasure(paramInt1, paramInt2);
-	// int j = View.MeasureSpec.getSize(paramInt1);
-	// int k = getChildCount();
-	// for (int l = 0; ; ++l)
-	// {
-	// if (l >= k)
-	// {
-	// if (this.mFirstLayout)
-	// {
-	// int i1 = this.mCurrentScreen * j;
-	// scrollTo(i1, i);
-	// this.mFirstLayout = false;
-	// }
-	// return;
-	// }
-	// getChildAt(l).measure(paramInt1, paramInt2);
-	// }
-	// }
-
+//	  onMeasure 设置屏幕的大小，每个值由每个childView自己设定,主要的类MeasureSpec类
+	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 //		System.out.println("=======onMeasure");
@@ -200,9 +130,14 @@ public class ScrollableViewGroup extends ViewGroup {
 		scrollTo(mCurrentScreen * width, 0);
 	}
 
+	/*
+	 * 每次滚动一点点都需要计算偏移量
+	 * (non-Javadoc)
+	 * @see android.view.View#computeScroll()
+	 */
 	@Override
 	public void computeScroll() {
-		Log.e(TAG, "computeScroll");
+//		Log.e(TAG, "computeScroll");
 		// TODO Auto-generated method stub
 		if (mScroller.computeScrollOffset()) {
 			scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
@@ -219,7 +154,7 @@ public class ScrollableViewGroup extends ViewGroup {
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		Log.e(TAG, "onInterceptTouchEvent");
-		System.out.println(">>>>>>>onInterceptTouchEvent index:" + ++index);
+//		System.out.println(">>>>>>>onInterceptTouchEvent index:" + ++index);
 		final int action = ev.getAction();
 		if ((action == MotionEvent.ACTION_MOVE)
 				&& (mTouchState != TOUCH_STATE_REST)) {
@@ -231,41 +166,39 @@ public class ScrollableViewGroup extends ViewGroup {
 		// +action);
 		switch (action) {
 		case MotionEvent.ACTION_MOVE:
-			System.out.println("===========onInterceptTouchEvent MOVE.");
+//			System.out.println("===========onInterceptTouchEvent MOVE.");
 			/*
 			 * 记录xy与mLastMotionX、mLastMotionY差值的绝对值。xDiff和yDiff大于
 			 * touchSlop时就认为界面拖动了足够大的距离，屏幕就可以移动了。
 			 */
 			final int xDiff = (int) Math.abs(x - mLastMotionX);
 			final int yDiff = (int) Math.abs(y - mLastMotionY);
-			System.out.println("--------------mTouchSlop :" + mTouchSlop);
+//			System.out.println("--------------mTouchSlop :" + mTouchSlop);
 			final int touchSlop = mTouchSlop;
 			boolean xMoved = (xDiff > touchSlop) && (xDiff >= 2 * yDiff);
 			boolean yMoved = yDiff > touchSlop;
 			if (xMoved || yMoved) {
 				if (xMoved) {
 					// Scroll if the user moved far enough along the X axis
-					System.out.println("===============mTouchState 2:"
-							+ mTouchState);
-					System.out.println("++++++++++++++mTouchState 1:"
-							+ mTouchState);
+//					System.out.println("========mTouchState 2:"+ mTouchState);
+//					System.out.println("++++++++mTouchState 1:"+ mTouchState);
 					mTouchState = TOUCH_STATE_SCROLLING;
 				}
 			}
 			break;
 		case MotionEvent.ACTION_DOWN:
-			System.out.println("===========onInterceptTouchEvent DOWN.");
+//			System.out.println("===========onInterceptTouchEvent DOWN.");
 			// Remember location of down touch
 			mLastMotionX = x;
 			mLastMotionY = y;
-			System.out.println("===============mTouchState 3:" + mTouchState);
+//			System.out.println("===============mTouchState 3:" + mTouchState);
 			mTouchState = mScroller.isFinished() ? TOUCH_STATE_REST
 					: TOUCH_STATE_SCROLLING;
 			break;
 		case MotionEvent.ACTION_CANCEL:
-			System.out.println("===========onInterceptTouchEvent CANCEL.");
+//			System.out.println("===========onInterceptTouchEvent CANCEL.");
 		case MotionEvent.ACTION_UP:
-			System.out.println("===========onInterceptTouchEvent UP.");
+//			System.out.println("===========onInterceptTouchEvent UP.");
 			// Release the drag
 			mTouchState = TOUCH_STATE_REST;
 			break;
@@ -317,10 +250,10 @@ public class ScrollableViewGroup extends ViewGroup {
 			int velocityX = (int) velocityTracker.getXVelocity();
 
 			Log.e(TAG, "velocityX:" + velocityX);
-			System.out.println("mCurScreen, mTouchState" + mCurrentScreen + ","
-					+ mTouchState);
-			System.out.println("velocityX, SNAP_VELOCITY" + velocityX + ","
-					+ SNAP_VELOCITY);
+//			System.out.println("mCurScreen, mTouchState" + mCurrentScreen + ","
+//					+ mTouchState);
+//			System.out.println("velocityX, SNAP_VELOCITY" + velocityX + ","
+//					+ SNAP_VELOCITY);
 			if (velocityX > SNAP_VELOCITY && mCurrentScreen > 0) {
 				// Fling enough to move left
 				Log.e(TAG, "snap left");
@@ -364,69 +297,21 @@ public class ScrollableViewGroup extends ViewGroup {
 	public void snapToScreen(int whichScreen) {
 		Log.e(TAG, "snapToScreen");
 		// get the valid layout page
-		System.out.println("input whichScreen:" + whichScreen);
+//		System.out.println("input whichScreen:" + whichScreen);
 		whichScreen = Math.max(0, Math.min(whichScreen, getChildCount() - 1));
-		System.out.println("new whichScreen:" + whichScreen);
-		System.out.println("getScrollX():whichScreen*getWidth():"
-				+ getScrollX() + "," + (whichScreen * getWidth()));
+//		System.out.println("new whichScreen:" + whichScreen);
+//		System.out.println("getScrollX():whichScreen*getWidth():"
+//				+ getScrollX() + "," + (whichScreen * getWidth()));
 		if (getScrollX() != (whichScreen * getWidth())) {
 			final int delta = whichScreen * getWidth() - getScrollX();
-			System.out.println("getScrollX():delta:" + getScrollX() + ","
-					+ delta);
+//			System.out.println("getScrollX():delta:" + getScrollX() + ","
+//					+ delta);
 			mScroller.startScroll(getScrollX(), 0, delta, 0,
 					Math.abs(delta) * 2);
 			mCurrentScreen = whichScreen;
 			invalidate(); // Redraw the layout
 		}
 	}
-
-	// public void setToScreen(int whichScreen) {
-	// System.out.println("=====^^^^^=====whichScreen1." + whichScreen);
-	// System.out.println("=====^^^^^=====setToScreen.");
-	// whichScreen = Math.max(0, Math.min(whichScreen, getChildCount()-1));
-	// mCurrentScreen = whichScreen;
-	// System.out.println("=====^^^^^=====whichScreen2." + whichScreen);
-	// scrollTo(whichScreen*getWidth(), 0);
-	// }
-
-	// private void snapToDestination()
-	// {
-	// int screenWidth = getWidth();
-	// int currentX = getScrollX();
-	// int k = screenWidth >> 1;
-	// int l = currentX + k;
-	// int i1 = getChildCount();
-	// if (l < 0);
-	// int i4;
-	// int i5;
-	// for (int i2 = -1; ; i2 = (i4 + i5) / screenWidth)
-	// {
-	// while (true)
-	// {
-	// snapToScreen(i2);
-	// return;
-	// int i3 = screenWidth * i1;
-	// if (l <= i3)
-	// break;
-	// i2 = i1;
-	// }
-	// i4 = getScrollX();
-	// i5 = screenWidth / 2;
-	// }
-	// }
-	//
-	// public void snapToScreen(int whichScreen) {
-	// // get the valid layout page
-	// whichScreen = Math.max(0, Math.min(whichScreen, getChildCount()-1));
-	// if (getScrollX() != (whichScreen*getWidth())) {
-	//
-	// final int delta = whichScreen*getWidth()-getScrollX();
-	// mScroller.startScroll(getScrollX(), 0,
-	// delta, 0, Math.abs(delta)*2);
-	// mCurrentScreen = whichScreen;
-	// invalidate(); // Redraw the layout
-	// }
-	// }
 
 	public void setOnCurrentViewChangedListener(
 			OnCurrentViewChangedListener paramOnCurrentViewChangedListener) {

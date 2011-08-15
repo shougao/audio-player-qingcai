@@ -38,5 +38,5 @@ void setMediaTime(int paramInt);
 AUDIO_TAG[] setPlayList();
 void setStopTimer(long paramInt);
 void updatePlayList(out AUDIO_TAG[] paramInt);
-void passSelectedFile(String paramStr);
+void passSelectedFile(int paramInt);
 }

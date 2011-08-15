@@ -8,11 +8,23 @@ import java.util.Map;
 
 public class FileList {
 
+	/*
+	 * 所有id都从0开始计算，在界面显示的歌曲列表从1开始
+	 * 2011-8-15
+	 */
 	private static final String SD_PATH = "/sdcard";
-	private ArrayList<String> mp3List = new ArrayList<String>();
-	private ArrayList<String> pathList = new ArrayList<String>();
-	private HashMap fileMap = new HashMap();
-	private int id = 0;
+	private ArrayList<String> mp3List = new ArrayList<String>();//用于存放显示的歌曲列表
+	private HashMap pathMap = new HashMap();//用于存放id - 路径对应表
+	private HashMap listMap = new HashMap();//用于存放id - 文件内容对象表
+	private int id = 1;
+	
+	public FileList(){
+		initFileList();
+	}
+	private void initFileList() {
+		// TODO Auto-generated method stub
+		scanFile(SD_PATH);
+	}
 	
 	public void scanFile(String path) {
 		File file = new File(path);
@@ -33,32 +45,24 @@ public class FileList {
 					}
 					FileContent fc = new FileContent();
 					fc.setFileName(file.getName());
-					mp3List.add(file.getName());
+					mp3List.add(id + "." + file.getName());
 					fc.setFilePath(file.getAbsolutePath());
 					fc.setParentsPath(file.getParent());
-					fileMap.put(file.getName(), fc);
+					listMap.put(id,fc);
+					pathMap.put(id, file.getAbsolutePath());
 					id++;
-//					System.out.println("=="+id);
 				}
 			}
 		}
 	}
 	
 	public ArrayList<String> getFileNameList() {
-		scanFile(SD_PATH);
-//		Iterator iter = fileMap.entrySet().iterator();
-//		while(iter.hasNext()){
-//			Map.Entry entry = (Map.Entry)iter.next();
-//			String key = (String) entry.getKey();
-//			mp3List.add(key);
-//			FileContent value = (FileContent) entry.getValue();
-//		}
 		return mp3List;
 	}
 	
-	public String getFilePath(String fileName) {
+	public String getFilePath(int index) {
 		// TODO Auto-generated method stub
-		FileContent localFileContent = (FileContent) fileMap.get(fileName);
+		FileContent localFileContent = (FileContent) listMap.get(index);
 		String filePath = localFileContent.getFilePath();
 		System.out.println(filePath);
 		return filePath;

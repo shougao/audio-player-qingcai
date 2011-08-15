@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -46,10 +47,11 @@ public class AudioActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 	static int intPlayMode = 1;
 	static int intPlayState = 0; // 0 stop, 1play.
+	static int runThread = 1;//控制刷新seekbar线程，与退出activity同步，1.表示在运行。
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
 			IndMenu, btnPrev;
 	private ImageView btnMain, vPlayMode, vPlay;
-	private IMediaService localMediaService;
+	private IMediaService localMediaService =null;
 	private ListView musicListView;
 	private ArrayAdapter<String> adapter = null;
 	private FileList localFileList = new FileList();
@@ -90,13 +92,41 @@ public class AudioActivity extends Activity implements OnClickListener {
 		mSeekBar.setOnSeekBarChangeListener(mSeekBarOnClickListener);
 		
 	}
-	
+	/*
+	 * 完成横竖屏切换
+	 * 2011-8-15
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onConfigurationChanged(android.content.res.Configuration)
+	 */
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {	 
+		super.onConfigurationChanged(newConfig); 
+		// 检测屏幕的方向：纵向或横向 
+		if (this.getResources().getConfiguration().orientation  
+				== Configuration.ORIENTATION_LANDSCAPE) { 
+			//当前为横屏， 在此处添加额外的处理代码 
+		} 
+		else if (this.getResources().getConfiguration().orientation  
+				== Configuration.ORIENTATION_PORTRAIT) { 
+			//当前为竖屏， 在此处添加额外的处理代码 
+		} 
+		//检测实体键盘的状态：推出或者合上     
+		if (newConfig.hardKeyboardHidden  
+				== Configuration.HARDKEYBOARDHIDDEN_NO){  
+			//实体键盘处于推出状态，在此处添加额外的处理代码 
+		}  
+		else if (newConfig.hardKeyboardHidden 
+				== Configuration.HARDKEYBOARDHIDDEN_YES){  
+			//实体键盘处于合上状态，在此处添加额外的处理代码 
+		} 
+	}
 	private ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			// TODO Auto-generated method stub
 			localMediaService = IMediaService.Stub.asInterface(service);
 			System.out.println("DEBUG>>>ServiceConnection.");
+			initPlayer();
 		}
 
 		@Override
@@ -137,6 +167,19 @@ public class AudioActivity extends Activity implements OnClickListener {
 	public void updateSeekBar(){
 		mPercentHandler.post(start);
 	}
+	protected void initPlayer() {
+		System.out.println("debug......initPlayer");
+//		if(localMediaService == null){
+//			System.out.println("debug....===================..null");
+//		}
+		// TODO Auto-generated method stub
+		try {
+			localMediaService.initPlayer();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	Runnable start = new Runnable(){
 
 		@Override
@@ -150,6 +193,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 		
 		@Override
 		public void run() {
+			if(runThread == 0){
+				return;
+			}
 			String value = null;
 			int position = 0;
 			// TODO Auto-generated method stub
@@ -159,7 +205,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			mSeekBar.setProgress(100*position/totalTime);
+			if(totalTime != 0){
+				mSeekBar.setProgress(100*position/totalTime);
+			}
 			if((position%60 < 9)||(position%60 == 9)){
 				value = (String.valueOf(position/60) +":"+ "0" + String.valueOf(position%60));
 			}else{
@@ -183,11 +231,13 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> listView, View v, int position, long id) {
-			String paramStr = listView.getItemAtPosition(position).toString();
+//			String paramInt = listView.getItemAtPosition(position).toString();
 //			System.out.println("!!!!!" + listView.getItemAtPosition(position).toString());//获得点击的文件名字
 //			Toast.makeText(mContext, "!!!xxx!!!" + position  +","+ id, Toast.LENGTH_LONG).show();
+			System.out.println("!!!!!position:" + position);
 			try {
-				localMediaService.passSelectedFile(paramStr);
+				localMediaService.passSelectedFile(position);
+				System.out.println("position:" + position);
 				updateDurationTime();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -223,7 +273,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btnPlay:
-			System.out.println("=========" + intPlayState);
+			System.out.println("=========intPlayState:" + intPlayState);
 			switch (intPlayState) {
 			case 0:
 				// System.out.println("========= 0  :" + intPlayState);
@@ -250,6 +300,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 				intPlayState = 0;
 				break;
 			}
+			break;
 		case R.id.btnNext:
 			System.out.println("DEBUG>>>next");
 			try {
@@ -273,9 +324,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.ImgList:
-			System.out
-					.println("DEBUG>>>ImgList===================================================");
-
+			System.out.println("DEBUG>>>ImgList=========");
 			try {
 				adapter = new ArrayAdapter<String>(getApplicationContext(),
 						android.R.layout.simple_list_item_1,
@@ -373,8 +422,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Toast.makeText(getApplicationContext(), "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG).show();
-				unbindService(mServiceConn);
-				System.out.println("=======unbindService");
+				exitPlayer();
+//				unbindService(mServiceConn);
+//				System.out.println("=======unbindService");
 				finish();
 				
 			}
@@ -417,21 +467,28 @@ public class AudioActivity extends Activity implements OnClickListener {
 					Toast.LENGTH_LONG).show();
 			break;
 		case Menu.FIRST + 2:
-			try {
-				localMediaService.stop();
-				localMediaService.release();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			unbindService(mServiceConn);
-			System.out.println("=======unbindService");
-			finish();
+			exitPlayer();
 			break;
 		}
 		return false;
 	}
 
+	private void exitPlayer() {
+		if(runThread == 1){
+			runThread = 0;
+		}
+		// TODO Auto-generated method stub
+		try {
+			localMediaService.stop();
+			localMediaService.release();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		unbindService(mServiceConn);
+		System.out.println("=======unbindService");
+		finish();
+	}
 	public void onOptionsMenuClosed(Menu menu) {
 		Toast.makeText(this, "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG)
 				.show();

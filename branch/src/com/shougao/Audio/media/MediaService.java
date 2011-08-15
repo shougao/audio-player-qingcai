@@ -1,4 +1,4 @@
-package com.shougao.Audio;
+package com.shougao.Audio.media;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +34,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	FileList audioFileList = new FileList();
 	private static int markFirstPlay = 1;  //标记是不是第一次播放文件，1. 第一次播放列表第一个文件
 	private static int markSelectedPlay = 0; //标记是不是选择播放，1， 选择播放。0.默认不选择播放。
-	private static String passSelectedFile = null;
+	private static int intPassSelectedFileIndex = 3;
 	private static int durationTime = 0;
 
 	@Override
@@ -81,29 +81,24 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
 	@Override
 	public void play() throws RemoteException {
-		// if(playState == 1){
-		// return;
-		// }
-		// if(mp.equals(null)){
-		// mp.reset();
-		// int i=1;
-		// FileList localFile = new FileList();
-		// String fileName = localFile.getFileNameList().get(i);
-		// String filePath = localFile.getFilePath(fileName);
-		// }
+		System.out.println("debug....play():");
 		String fileName = null;
 		String filePath = null;
+		System.out.println("debug.....playState:" + playState);
 		if (playState == -1) {
 			//第一次播放音乐
+			System.out.println("debug.....markFirstPlay:" + markFirstPlay);
 			if (markFirstPlay == 1) {
-				fileName = audioFileList.getFileNameList().get(0);
-				filePath = audioFileList.getFilePath(fileName);
+				System.out.println("debug.......... file Path:" + filePath);
+				filePath = audioFileList.getFilePath(1);//index为
+				System.out.println("debug.......... file Path:" + filePath);
 				markFirstPlay = 0;
 			} 
 			//播放选择的音乐文件
 			if(markSelectedPlay == 1){
-				filePath = audioFileList.getFilePath(passSelectedFile);
+				filePath = audioFileList.getFilePath(intPassSelectedFileIndex -1);
 				markSelectedPlay = 0;
+				System.out.println("debug......filePath:" + filePath);
 			}
 			try {
 				mp.setDataSource(filePath);
@@ -278,11 +273,11 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	}
 
 	@Override
-	public void passSelectedFile(String paramStr) throws RemoteException {
+	public void passSelectedFile(int paramInt) throws RemoteException {
 		// TODO Auto-generated method stub
 		playState = -1;
 		markSelectedPlay = 1;
-		passSelectedFile = paramStr;
+		intPassSelectedFileIndex = paramInt;
 		stop();
 		play();
 	}

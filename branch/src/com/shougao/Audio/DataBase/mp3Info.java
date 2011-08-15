@@ -11,6 +11,5 @@ public class mp3Info {
 	public void mp3Info(File fileName){
 		String name = fileName.toString();
 		FileList fList = new FileList();
-		String filePath = fList.getFilePath(name);
 	}
 }
