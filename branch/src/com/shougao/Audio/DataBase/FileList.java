@@ -60,6 +60,10 @@ public class FileList {
 		return mp3List;
 	}
 	
+	public int fileNum(){
+		return mp3List.size();
+	}
+	
 	public String getFilePath(int index) {
 		// TODO Auto-generated method stub
 		FileContent localFileContent = (FileContent) listMap.get(index);

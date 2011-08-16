@@ -4,6 +4,6 @@ public class ShufflePlayMode implements IPlayMode {
 
 	@Override
 	public int getPlayMode() {
-		return 3;
+		return 4;
 	}
 }

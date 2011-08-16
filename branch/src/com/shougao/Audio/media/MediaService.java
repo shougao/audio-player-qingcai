@@ -2,6 +2,7 @@ package com.shougao.Audio.media;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 import com.shougao.Audio.DataBase.AUDIO_TAG;
 import com.shougao.Audio.DataBase.AudioDataTools;
@@ -25,18 +26,20 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	static final int PLAYING = 1;
 	static final int PAUSE = 2;
 	static final int STOP = 0;
-	static int intPlayMode = 1;
+	static int defaultPlayMode = 1;
 	static int playIndex = 1;
 	static final int PLAYMODE_NORMAL = 1;// 循环播放
 	static final int PLAYMODE_ORDER = 2;// 顺序播放
 	static final int PLAYMODE_SINGLE = 3;// 单曲重复
 	static final int PLAYMODE_SHUFFLE = 4;// 随机播放
+	private CurrentPlayMode localPlayMode = new CurrentPlayMode();
 	private MediaPlayer mp = new MediaPlayer();
 	FileList audioFileList = new FileList();
 	private static int markFirstPlay = 1; // 标记是不是第一次播放文件，1. 第一次播放列表第一个文件
 	private static int markSelectedPlay = 0; // 标记是不是选择播放，1， 选择播放。0.默认不选择播放。
 	private static int intPassSelectedFileIndex = 3;
 	private static int durationTime = 0;
+	private static int controlPlay = 0;//控制播放方式是通过上一曲下一曲播放。
 
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
@@ -86,10 +89,9 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		String fileName = null;
 		String filePath = null;
 		System.out.println("debug.....playState:" + playState);
-		if (playState == -1) {
-			// 第一次播放音乐
+		if (playState != 0) {//控制是否从暂停开始播放
 			System.out.println("debug.....markFirstPlay:" + markFirstPlay);
-			if (markFirstPlay == 1) {
+			if (markFirstPlay == 1) {// 第一次播放音乐
 				System.out.println("debug.......... playIndex:" + playIndex);
 				filePath = audioFileList.getFilePath(playIndex);// index为
 				System.out.println("debug.......... file Path:" + filePath);
@@ -99,9 +101,16 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			if (markSelectedPlay == 1) {
 				playIndex = intPassSelectedFileIndex -1;
 				filePath = audioFileList.getFilePath(playIndex);
-				markSelectedPlay = 0;
 				System.out.println("debug......filePath:" + filePath);
+				markSelectedPlay = 0;
 			}
+			//上一曲，下一曲控制播放
+			if(controlPlay ==1 ){
+				filePath = audioFileList.getFilePath(playIndex);
+				System.out.println("debug.......... file Path:" + filePath);
+				controlPlay = 0;
+			}
+			System.out.println("filePath: " + filePath);
 			try {
 				mp.setDataSource(filePath);
 				mp.prepare();
@@ -117,7 +126,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			}
 			playState = 0;
 		}
-		if (playState == 0) {
+		if (playState == 0) {//0 表示暂停
 			setDuration();
 			mp.start();
 			playState = 1;
@@ -165,10 +174,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void prev() throws RemoteException {
 		// TODO Auto-generated method stub
-		CurrentPlayMode pm = new CurrentPlayMode();
-		System.out.println("get play Mode pm. new CurrentPlayMode()");
-		if(pm == null) System.out.println("pm is null");
-		System.out.println("media.Service.debug......next." + pm.getPlayMode());
+//		if(pm == null) System.out.println("pm is null");
+		System.out.println("current play mode：" + localPlayMode.getPlayMode());
 	}
 
 	/*
@@ -179,22 +186,32 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void next() throws RemoteException {
 		// TODO Auto-generated method stub
-		System.out.println("media.Service.debug......next.");
+		controlPlay = 1;
+		int fileNum = audioFileList.fileNum();
+		System.out.println("media.Service......next.");
 		stop();
 		int playMode = getRepeatMode();
 		System.out.println("playmode:" + playMode);
 		if (playMode == PLAYMODE_NORMAL) {// 顺序播放 value = 1.
-			playIndex = playIndex = 1;
+			playIndex = playIndex + 1;
+			if(playIndex > fileNum){//下一曲播放
+				playIndex = 1;
+			}
 		}
-		if (playMode == PLAYMODE_ORDER) {// 顺序播放 value = 2.
-
+		if (playMode == PLAYMODE_ORDER) {// 循环播放 value = 2.
+			playIndex = playIndex + 1;
+			if(playIndex > fileNum){
+				playIndex = 1;
+			}
 		}
-		if (playMode == PLAYMODE_SINGLE) {// 顺序播放 value = 3.
-
+		if (playMode == PLAYMODE_SINGLE) {// 单曲播放 value = 3.
+			playIndex = playIndex;
 		}
-		if (playMode == PLAYMODE_SHUFFLE) {// 顺序播放 value = 4.
-
+		if (playMode == PLAYMODE_SHUFFLE) {// 随机播放 value = 4.
+			Random r = new Random();
+			playIndex = r.nextInt(fileNum);
 		}
+		play();
 	}
 
 	@Override
@@ -206,10 +223,9 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public int getRepeatMode() throws RemoteException {
 		System.out.println("media.Service.debug......getRepeatMode.");
-		CurrentPlayMode localPlayMode = new CurrentPlayMode();
 		// localPlayMode.setPlayMode(new OrderPlayMode());
 		int i = localPlayMode.getPlayMode();
-		System.out.println("debug...=======playmode:" + i);
+//		System.out.println("debug...=======playmode:" + i);
 		return i;
 	}
 
@@ -228,16 +244,20 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
 	@Override
 	public int setRepeatMode() throws RemoteException {
-		System.out.println("=====intPlayMode:" + intPlayMode);
-		intPlayMode = intPlayMode + 1;
-		CurrentPlayMode localPlayMode = new CurrentPlayMode();
-		intPlayMode = (intPlayMode % 4);
-		switch (intPlayMode) {
+		System.out.println("=====defaultPlayMode:" + defaultPlayMode);
+		defaultPlayMode = defaultPlayMode + 1;
+//		CurrentPlayMode localPlayMode = new CurrentPlayMode();
+		defaultPlayMode = (defaultPlayMode % 4);
+		switch (defaultPlayMode) {
 		case 1:
 			localPlayMode.setPlayMode(new NormalPlayMode());
+//			int a = localPlayMode.getPlayMode();
+//			System.out.println("=====defaultPlayMode:" + a);
 			break;
 		case 2:
 			localPlayMode.setPlayMode(new OrderPlayMode());
+//			int b = localPlayMode.getPlayMode();
+//			System.out.println("=====defaultPlayMode:" + b);
 			break;
 		case 3:
 			localPlayMode.setPlayMode(new SinglePlayMode());

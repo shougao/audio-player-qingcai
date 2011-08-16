@@ -45,7 +45,7 @@ import android.widget.Toast;
 
 public class AudioActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
-	static int intPlayMode = 1;
+	static int intPlayMode = 1;//初始化顺序播放
 	static int intPlayState = 0; // 0 stop, 1play.
 	static int runThread = 1;//控制刷新seekbar线程，与退出activity同步，1.表示在运行。
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
@@ -316,14 +316,14 @@ public class AudioActivity extends Activity implements OnClickListener {
 			
 		case R.id.btnPrev:
 			System.out.println("DEBUG>>>prevent");
-			CurrentPlayMode pm = new CurrentPlayMode();
-			System.out.println(":" + pm.getPlayMode());
-//			try {
-//				localMediaService.prev();
-//			} catch (RemoteException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+//			CurrentPlayMode pm = new CurrentPlayMode();
+//			System.out.println(":" + pm.getPlayMode());
+			try {
+				localMediaService.prev();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 //			updateDurationTime();
 			break;
 
@@ -353,9 +353,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.IndPlayMode:
-			System.out.println("========");
 			intPlayMode = intPlayMode + 1;
 			intPlayMode = (intPlayMode % 4);
+			System.out.println("========current play mode:" + intPlayMode);
 			switch (intPlayMode) {
 			case 1:
 				vPlayMode.setImageResource(R.drawable.icon_playmode_normal);
@@ -496,5 +496,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 	public void onOptionsMenuClosed(Menu menu) {
 		Toast.makeText(this, "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG)
 				.show();
+	}
+	
+	@Override
+	protected void onDestroy(){
+		System.out.println("Activity: onDestroy.");
 	}
 }

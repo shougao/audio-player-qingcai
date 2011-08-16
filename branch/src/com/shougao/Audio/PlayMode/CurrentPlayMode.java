@@ -9,7 +9,7 @@ public class CurrentPlayMode {
 	public int getPlayMode(){
 //		if(localPlayMode.equals(null)) System.out.println("localPlayMode is null.");
 		int k = localPlayMode.getPlayMode();
-		k = k + 1;
+//		k = k + 1;
 		System.out.println("======playmode =======:" + k);
 		return k;//localPlayMode.getPlayMode();
 	}
