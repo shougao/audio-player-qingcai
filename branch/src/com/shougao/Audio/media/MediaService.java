@@ -27,7 +27,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	static final int PAUSE = 2;
 	static final int STOP = 0;
 	static int defaultPlayMode = 1;
-	static int playIndex = 1;
+	static int playIndex = 0;
 	static final int PLAYMODE_NORMAL = 1;// 循环播放
 	static final int PLAYMODE_ORDER = 2;// 顺序播放
 	static final int PLAYMODE_SINGLE = 3;// 单曲重复
@@ -37,7 +37,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	FileList audioFileList = new FileList();
 	private static int markFirstPlay = 1; // 标记是不是第一次播放文件，1. 第一次播放列表第一个文件
 	private static int markSelectedPlay = 0; // 标记是不是选择播放，1， 选择播放。0.默认不选择播放。
-	private static int intPassSelectedFileIndex = 3;
+	private static int intPassSelectedFileIndex = -1;
 	private static int durationTime = 0;
 	private static int controlPlay = 0;//控制播放方式是通过上一曲下一曲播放。
 
@@ -99,7 +99,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			}
 			// 播放选择的音乐文件
 			if (markSelectedPlay == 1) {
-				playIndex = intPassSelectedFileIndex -1;
+				playIndex = intPassSelectedFileIndex;
 				filePath = audioFileList.getFilePath(playIndex);
 				System.out.println("debug......filePath:" + filePath);
 				markSelectedPlay = 0;
@@ -309,6 +309,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	public void passSelectedFile(int paramInt) throws RemoteException {
 		// TODO Auto-generated method stub
 		playState = -1;
+		markFirstPlay = 0;
 		markSelectedPlay = 1;
 		intPassSelectedFileIndex = paramInt;
 		stop();

@@ -16,7 +16,7 @@ public class FileList {
 	private ArrayList<String> mp3List = new ArrayList<String>();//用于存放显示的歌曲列表
 	private HashMap pathMap = new HashMap();//用于存放id - 路径对应表
 	private HashMap listMap = new HashMap();//用于存放id - 文件内容对象表
-	private int id = 1;
+	private int id = 0;
 	
 	public FileList(){
 		initFileList();
@@ -45,7 +45,7 @@ public class FileList {
 					}
 					FileContent fc = new FileContent();
 					fc.setFileName(file.getName());
-					mp3List.add(id + "." + file.getName());
+					mp3List.add((id+1) + "." + file.getName());
 					fc.setFilePath(file.getAbsolutePath());
 					fc.setParentsPath(file.getParent());
 					listMap.put(id,fc);

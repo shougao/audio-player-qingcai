@@ -1,15 +1,6 @@
 package com.shougao.Audio;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import com.shougao.Audio.DataBase.FileList;
-import com.shougao.Audio.PlayMode.CurrentPlayMode;
-import com.shougao.Audio.PlayMode.OrderPlayMode;
-import com.shougao.Audio.PlayMode.ShufflePlayMode;
-import com.shougao.Audio.PlayMode.SinglePlayMode;
+import com.shougao.Audio.component.ScrollableViewGroup;
 import com.shougao.Audio.media.IMediaService;
 
 import android.app.Activity;
@@ -23,7 +14,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Parcel;
 import android.os.RemoteException;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +21,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -45,21 +32,22 @@ import android.widget.Toast;
 
 public class AudioActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
+//	static boolean exitFLG = false;//标示推出Activity
 	static int intPlayMode = 1;//初始化顺序播放
 	static int intPlayState = 0; // 0 stop, 1play.
 	static int runThread = 1;//控制刷新seekbar线程，与退出activity同步，1.表示在运行。
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
 			IndMenu, btnPrev;
-	private ImageView btnMain, vPlayMode, vPlay;
+	private ImageView vPlayMode, vPlay;
 	private IMediaService localMediaService =null;
 	private ListView musicListView;
 	private ArrayAdapter<String> adapter = null;
-	private FileList localFileList = new FileList();
 	private SeekBar mSeekBar= null;
 	private TextView currentProcessText = null;
 	private TextView currentDurationText = null;
 	private static int totalTime; 
 	private static Handler mPercentHandler = new Handler();
+	ScrollableViewGroup viewGroup = null; 
 	Context mContext;
 	
 	@Override
@@ -72,6 +60,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
 		btnList = (ImageButton) findViewById(R.id.ImgList);
+		viewGroup = (ScrollableViewGroup)findViewById(R.id.ViewFlipper);
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
 		IndMenu = (ImageButton) findViewById(R.id.IndMenu);
 		musicListView = (ListView) findViewById(R.id.PlayList);
@@ -164,10 +153,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
-
-	public void updateSeekBar(){
-		mPercentHandler.post(start);
-	}
 	protected void initPlayer() {
 		System.out.println("debug......initPlayer");
 //		if(localMediaService == null){
@@ -181,22 +166,28 @@ public class AudioActivity extends Activity implements OnClickListener {
 			e.printStackTrace();
 		}
 	}
-	Runnable start = new Runnable(){
+	
 
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			mPercentHandler.post(updateSeekbar);
-		}
-	};
+	public void updateSeekBar(){
+		mPercentHandler.post(updateSeekbar);
+	}
+
+//	Runnable start = new Runnable(){
+//
+//		@Override
+//		public void run() {
+//			// TODO Auto-generated method stub
+//			mPercentHandler.post(updateSeekbar);
+//		}
+//	};
 	
 	Runnable updateSeekbar = new Runnable(){
 		
 		@Override
 		public void run() {
-			if(runThread == 0){
-				return;
-			}
+//			if(runThread == 0){
+//				return;
+//			}
 			String value = null;
 			int position = 0;
 			// TODO Auto-generated method stub
@@ -215,9 +206,13 @@ public class AudioActivity extends Activity implements OnClickListener {
 				value = (String.valueOf(position/60) +":"+ String.valueOf(position%60));
 			}
 			currentProcessText.setText(value);
+//			if(exitFLG == true){
+//				mPercentHandler.removeCallbacks(updateSeekbar);
+//			}
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
 		}
 	};
+	
 	
 	/* 
 	 * onItemClick 参数：
@@ -232,10 +227,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onItemClick(AdapterView<?> listView, View v, int position, long id) {
-//			String paramStr = listView.getItemAtPosition(position).toString();
-//			int i = Integer.parseInt(paramStr.substring(0, paramStr.indexOf(".")));
-//			System.out.println("!!!!!" + listView.getItemAtPosition(position).toString());//获得点击的文件名字
-//			Toast.makeText(mContext, "!!!xxx!!!" + position  +","+ id, Toast.LENGTH_LONG).show();
 			System.out.println("!!!!!position:" + position);
 			try {
 				localMediaService.passSelectedFile(position);
@@ -244,6 +235,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			//改变播放状态
+			if(intPlayState ==0){
+				vPlay.setImageResource(R.drawable.img_playback_bt_pause);
 			}
 		}
 	};
@@ -338,18 +333,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 				e1.printStackTrace();
 			}
 			musicListView.setAdapter(adapter);
-			// for(String music: localMediaService.getPlayList()){
-			// System.out.println("getPlayList"+music);
-			// }
-			// localFileList.getFileNameList());
-			// adapter = new ArrayAdapter<String>(this, R.layout.listlayout,
-			// list);
-			// setContentView(musicListView);
-//			Simple_list_item_1 每项有一个 TextView
-//			Simple_list_item_2 每项有两个 TextView
-//			Simple_list_item_checked 带 CheckView 的项
-//			Simple_list_item_multiple_choise 每项有一个 TextView 并可以多选
-//			Simple_list_item_single_choice 每项有一个 TextView ，但只能进行单选。
 			break;
 
 		case R.id.IndPlayMode:
@@ -498,6 +481,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 				.show();
 	}
 	
+	protected void onStop(){
+//		exitFLG = true;
+	}
 	@Override
 	protected void onDestroy(){
 		System.out.println("Activity: onDestroy.");

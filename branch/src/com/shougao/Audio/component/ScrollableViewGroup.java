@@ -22,7 +22,7 @@ public class ScrollableViewGroup extends ViewGroup {
 
 	private Scroller mScroller;
 	private int mDefaultScreen = 0;
-	private int mCurrentScreen;
+	private int mCurrentScreen = 0;
 	private int mNextScreen = -1;
 	private int mTouchSlop;
 	private static final int SNAP_VELOCITY = 600;
@@ -39,6 +39,10 @@ public class ScrollableViewGroup extends ViewGroup {
 	private static final String TAG = "ScrollLayout";
 	private boolean mFirstLayout = true;
 
+	public int getCurrentScreen(){
+		return mCurrentScreen;
+	}
+	
 	public ScrollableViewGroup(Context paramContext) {
 		super(paramContext);
 		Log.e(TAG, "ScrollableViewGroup 1");
@@ -279,7 +283,6 @@ public class ScrollableViewGroup extends ViewGroup {
 			mTouchState = TOUCH_STATE_REST;
 			break;
 		}
-
 		return true;
 	}
 
@@ -296,16 +299,9 @@ public class ScrollableViewGroup extends ViewGroup {
 
 	public void snapToScreen(int whichScreen) {
 		Log.e(TAG, "snapToScreen");
-		// get the valid layout page
-//		System.out.println("input whichScreen:" + whichScreen);
 		whichScreen = Math.max(0, Math.min(whichScreen, getChildCount() - 1));
-//		System.out.println("new whichScreen:" + whichScreen);
-//		System.out.println("getScrollX():whichScreen*getWidth():"
-//				+ getScrollX() + "," + (whichScreen * getWidth()));
 		if (getScrollX() != (whichScreen * getWidth())) {
 			final int delta = whichScreen * getWidth() - getScrollX();
-//			System.out.println("getScrollX():delta:" + getScrollX() + ","
-//					+ delta);
 			mScroller.startScroll(getScrollX(), 0, delta, 0,
 					Math.abs(delta) * 2);
 			mCurrentScreen = whichScreen;
