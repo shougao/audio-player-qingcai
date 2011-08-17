@@ -131,21 +131,19 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			mp.start();
 			playState = 1;
 		}
+		//一首播放结束调用这个函数
 		mp.setOnCompletionListener(new OnCompletionListener() {
 
 			@Override
 			public void onCompletion(MediaPlayer mp) {
 				// TODO Auto-generated method stub
 				try {
-					if (getRepeatMode() == PLAYMODE_NORMAL) {
-						play();
-					}
+					next();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
-
 		});
 	}
 
@@ -174,8 +172,32 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void prev() throws RemoteException {
 		// TODO Auto-generated method stub
-//		if(pm == null) System.out.println("pm is null");
-		System.out.println("current play mode：" + localPlayMode.getPlayMode());
+		controlPlay = 1;
+		int fileNum = audioFileList.fileNum();
+		System.out.println("media.Service......previous.");
+		stop();
+		int playMode = getRepeatMode();
+		System.out.println("playmode:" + playMode);
+		if (playMode == PLAYMODE_NORMAL) {// 顺序播放 value = 1.
+			playIndex = playIndex - 1;
+			if(playIndex < 0){//上一曲播放
+				playIndex = 0;
+			}
+		}
+		if (playMode == PLAYMODE_ORDER) {// 循环播放 value = 2.
+			playIndex = playIndex - 1;
+			if(playIndex < 0){//上一曲播放
+				playIndex = 0;
+			}
+		}
+		if (playMode == PLAYMODE_SINGLE) {// 单曲播放 value = 3.
+			playIndex = playIndex;
+		}
+		if (playMode == PLAYMODE_SHUFFLE) {// 随机播放 value = 4.
+			Random r = new Random();
+			playIndex = r.nextInt(fileNum);
+		}
+		play();
 	}
 
 	/*
@@ -195,13 +217,13 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		if (playMode == PLAYMODE_NORMAL) {// 顺序播放 value = 1.
 			playIndex = playIndex + 1;
 			if(playIndex > fileNum){//下一曲播放
-				playIndex = 1;
+				playIndex = 0;
 			}
 		}
 		if (playMode == PLAYMODE_ORDER) {// 循环播放 value = 2.
 			playIndex = playIndex + 1;
 			if(playIndex > fileNum){
-				playIndex = 1;
+				playIndex = 0;
 			}
 		}
 		if (playMode == PLAYMODE_SINGLE) {// 单曲播放 value = 3.
@@ -332,7 +354,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void setDuration() throws RemoteException {
 		// TODO Auto-generated method stub
-		durationTime = mp.getDuration();
+		durationTime = mp.getDuration();//mp对象切换后，自动重新获得持续时间。
 	}
 
 	@Override

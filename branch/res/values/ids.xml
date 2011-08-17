@@ -48,4 +48,14 @@
     <item type="id" name="linearPlayInfo"></item>
     <item type="id" name="skbGuage"></item>
     <item type="id" name="seek_background"></item>
+    <item type="id" name="RelativeMp3Info"></item>
+    <item type="id" name="linearMp3Info"></item>
+    <item type="id" name="RelativeMp3InfoSub"></item>
+    <item type="id" name="musicTitle"></item>
+    <item type="id" name="musicArtist"></item>
+    <item type="id" name="musicAlbum"></item>
+    <item type="id" name="musicGenere"></item>
+    <item type="id" name="linearTextInfo"></item>
+    <item type="id" name="imageAlbumart"></item>
+    <item type="id" name="RelativeMp3Text"></item>
 </resources>

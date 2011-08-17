@@ -1,8 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout 
+<FrameLayout
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android">
+	<RelativeLayout
+		android:layout_gravity="fill_horizontal|top|center"
+		android:id="@id/RelativeMp3Info"
+		android:layout_height="320.0dip"
+		android:layout_alignParentTop="true"
+		android:layout_width="match_parent">
+		<ImageView
+			android:layout_width="wrap_content"
+			android:id="@id/imageAlbumart"
+			android:src="@drawable/albumart_mp_unknown"
+			android:layout_height="wrap_content"
+			android:layout_centerVertical="true"
+			android:layout_centerHorizontal="true"></ImageView>
+		<RelativeLayout
+			android:layout_width="wrap_content"
+			android:id="@id/RelativeMp3Text"
+			android:layout_height="320dip"
+			android:layout_alignParentLeft="true"
+			android:layout_alignParentRight="true"
+			android:layout_alignParentTop="true">
+			<LinearLayout
+				android:orientation="vertical"
+				android:id="@id/linearTextInfo"
+				android:layout_alignParentBottom="true"
+				android:layout_alignParentRight="true"
+				android:layout_height="fill_parent"
+				android:layout_width="fill_parent"
+				android:gravity="center">
+				<TextView
+					android:text=""
+					android:id="@id/musicTitle"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+				<TextView
+					android:text=""
+					android:id="@id/musicArtist"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+				<TextView
+					android:text=""
+					android:id="@id/musicAlbum"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+				<TextView
+					android:text=""
+					android:id="@id/musicGenere"
+					android:layout_height="wrap_content"
+					android:layout_width="wrap_content"
+					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+			</LinearLayout>
+		</RelativeLayout>
+	</RelativeLayout>
 	<RelativeLayout
 		android:layout_gravity="fill_horizontal|bottom|center"
 		android:id="@id/RelativeLayoutPlayInfo"

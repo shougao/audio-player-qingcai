@@ -45,6 +45,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private SeekBar mSeekBar= null;
 	private TextView currentProcessText = null;
 	private TextView currentDurationText = null;
+	private TextView mTitle = null;
+	private TextView mArtist = null;
+	private TextView mAlbum = null;
+	private TextView mGenre = null;
 	private static int totalTime; 
 	private static Handler mPercentHandler = new Handler();
 	ScrollableViewGroup viewGroup = null; 
@@ -55,6 +59,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		mContext = this;
+		mTitle  = (TextView)findViewById(R.id.musicTitle);
+		mArtist  = (TextView)findViewById(R.id.musicArtist);
+		mAlbum  = (TextView)findViewById(R.id.musicAlbum);
+		mGenre  = (TextView)findViewById(R.id.musicGenere);
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
@@ -209,6 +217,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 //			if(exitFLG == true){
 //				mPercentHandler.removeCallbacks(updateSeekbar);
 //			}
+			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
 		}
 	};
@@ -319,7 +328,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			updateDurationTime();
+			updateDurationTime();
 			break;
 
 		case R.id.ImgList:
