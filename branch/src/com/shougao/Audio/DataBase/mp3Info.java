@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 /*
  * 读取mp3文件信息，并显示在playlayout上
  * 2011-8-17
@@ -42,11 +43,17 @@ public class mp3Info {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//获取tital等细节信息
-		setMusicTitle(new String(buffer,3,30).trim());
-		setMusicArtist(new String(buffer,33,30).trim());
-		setMusicAlbum(new String(buffer,63,30).trim());
-		setMusicComment(new String(buffer,97,28).trim());
+		//获取tital等细节信息,转化成GBK读取。
+		
+		try {
+			setMusicTitle(new String(buffer,3,30,"GBK").trim());
+			setMusicArtist(new String(buffer,33,30,"GBK").trim());
+			setMusicAlbum(new String(buffer,63,30,"GBK").trim());
+			setMusicComment(new String(buffer,97,28,"GBK").trim());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/**

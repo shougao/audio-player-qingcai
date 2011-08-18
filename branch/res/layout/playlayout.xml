@@ -30,31 +30,12 @@
 				android:layout_alignParentRight="true"
 				android:layout_height="fill_parent"
 				android:layout_width="fill_parent"
-				android:gravity="center">
-				<TextView
-					android:text=""
-					android:id="@id/musicTitle"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
-				<TextView
-					android:text=""
-					android:id="@id/musicArtist"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
-				<TextView
-					android:text=""
-					android:id="@id/musicAlbum"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
-				<TextView
-					android:text=""
-					android:id="@id/musicGenere"
-					android:layout_height="wrap_content"
-					android:layout_width="wrap_content"
-					android:textAppearance="?android:attr/textAppearanceLarge"></TextView>
+				android:gravity="center"
+				android:weightSum="1">
+				<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@id/musicTitle" android:text="title:"></TextView>
+				<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@id/musicArtist" android:text="artist:"></TextView>
+				<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@id/musicAlbum" android:text="album:"></TextView>
+				<TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textAppearance="?android:attr/textAppearanceLarge" android:id="@id/musicCommon" android:text="common:"></TextView>
 			</LinearLayout>
 		</RelativeLayout>
 	</RelativeLayout>

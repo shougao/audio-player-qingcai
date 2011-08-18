@@ -383,25 +383,27 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		// TODO Auto-generated method stub
 		if(filePath == null)
 			return null;
+		System.out.println("====title=========================");
 		mp3Info currentInfo = new mp3Info(filePath);
-		ArrayList<String> mp3Info = new ArrayList<String>();
-		int id = 0;
+		List<String> mp3Info = new ArrayList<String>();
+//		int id = 0;
 		if(currentInfo.getMusicTitle() != null){
-			mp3Info.add(id, currentInfo.getMusicTitle());
-			id = id + 1;
+			mp3Info.add(currentInfo.getMusicTitle());
+//			id = id + 1;
 		}
 		if(currentInfo.getMusicArtist() != null){
-			mp3Info.add(id, currentInfo.getMusicArtist());
-			id = id + 1;
+			mp3Info.add(currentInfo.getMusicArtist());
+//			id = id + 1;
 		}
 		if(currentInfo.getMusicAlbum() != null){
-			mp3Info.add(id, currentInfo.getMusicAlbum());
-			id = id + 1;
+			mp3Info.add(currentInfo.getMusicAlbum());
+//			id = id + 1;
 		}
 		if(currentInfo.getMusicComment() != null){
-			mp3Info.add(id, currentInfo.getMusicComment());
-			id = id + 1;
+			mp3Info.add(currentInfo.getMusicComment());
+//			id = id + 1;
 		}
+		System.out.println(currentInfo.getMusicTitle()+"!====title=========================");
 		return mp3Info;
 	}
 }

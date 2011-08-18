@@ -1,6 +1,7 @@
 package com.shougao.Audio;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.shougao.Audio.component.ScrollableViewGroup;
 import com.shougao.Audio.media.IMediaService;
@@ -56,7 +57,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private static Handler mPercentHandler = new Handler();//在initplayer中使用HandlerThread.getLooper初始化
 	ScrollableViewGroup viewGroup = null; 
 	HandlerThread handlerThread = new HandlerThread("updateSeekTime");
-	private ArrayList<String> musicInfo = null;
+	private List<String> musicInfo = null;
 	Context mContext;
 	
 	@Override
@@ -167,6 +168,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		}
 	};
 	protected void initPlayer() {
+//		初始化service中的meidaplayer
 		System.out.println("debug......initPlayer");
 		// TODO Auto-generated method stub
 		try {
@@ -175,6 +177,16 @@ public class AudioActivity extends Activity implements OnClickListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+//		显示播放列表
+		try {
+			adapter = new ArrayAdapter<String>(getApplicationContext(),
+					android.R.layout.simple_list_item_1,
+					localMediaService.getPlayList());
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		musicListView.setAdapter(adapter);
 	}
 	
 
@@ -213,7 +225,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 				mPercentHandler.removeCallbacks(updateSeekbar);
 			}
 			System.out.println("exitFLG" + exitFLG);
-//			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
+			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
 		}
 	};
@@ -250,15 +262,17 @@ public class AudioActivity extends Activity implements OnClickListener {
 //	ArrayList<String> mp3Info = null;
 	private void updateMp3Info(){
 		try {
-			musicInfo = (ArrayList<String>) localMediaService.getMp3Info();
+			musicInfo = localMediaService.getMp3Info();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		mTitle.setText(musicInfo.indexOf(0));
-		mArtist.setText(musicInfo.indexOf(1));
-		mAlbum.setText(musicInfo.indexOf(2));
-		mComment.setText(musicInfo.indexOf(3));
+		System.out.println("================================");
+		System.out.println(musicInfo.indexOf(1)+"=======================================================99999999999");
+//		mTitle.setText(musicInfo.indexOf(0));
+		mArtist.setText("asdkfjkkjkj");
+//		mAlbum.setText(musicInfo.indexOf(2));
+//		mComment.setText(musicInfo.indexOf(3));
 	}
 	
 	/*
@@ -318,6 +332,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.btnNext:
 			System.out.println("DEBUG>>>next");
+			updateMp3Info();
 			try {
 				localMediaService.next();
 			} catch (RemoteException e) {
@@ -342,15 +357,15 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 		case R.id.ImgList:
 			System.out.println("DEBUG>>>ImgList=========");
-			try {
-				adapter = new ArrayAdapter<String>(getApplicationContext(),
-						android.R.layout.simple_list_item_1,
-						localMediaService.getPlayList());
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			musicListView.setAdapter(adapter);
+//			try {
+//				adapter = new ArrayAdapter<String>(getApplicationContext(),
+//						android.R.layout.simple_list_item_1,
+//						localMediaService.getPlayList());
+//			} catch (RemoteException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+//			musicListView.setAdapter(adapter);
 			break;
 
 		case R.id.IndPlayMode:
