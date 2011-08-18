@@ -1,12 +1,14 @@
 package com.shougao.Audio.media;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import com.shougao.Audio.DataBase.AUDIO_TAG;
 import com.shougao.Audio.DataBase.AudioDataTools;
 import com.shougao.Audio.DataBase.FileList;
+import com.shougao.Audio.DataBase.mp3Info;
 import com.shougao.Audio.PlayMode.CurrentPlayMode;
 import com.shougao.Audio.PlayMode.IPlayMode;
 import com.shougao.Audio.PlayMode.NormalPlayMode;
@@ -39,7 +41,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	private static int markSelectedPlay = 0; // 标记是不是选择播放，1， 选择播放。0.默认不选择播放。
 	private static int intPassSelectedFileIndex = -1;
 	private static int durationTime = 0;
-	private static int controlPlay = 0;//控制播放方式是通过上一曲下一曲播放。
+	private static int controlPlay = 0;// 控制播放方式是通过上一曲下一曲播放。
+	private String filePath = null;
 
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
@@ -87,9 +90,9 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	public void play() throws RemoteException {
 		System.out.println("debug....play():");
 		String fileName = null;
-		String filePath = null;
+
 		System.out.println("debug.....playState:" + playState);
-		if (playState != 0) {//控制是否从暂停开始播放
+		if (playState != 0) {// 控制是否从暂停开始播放
 			System.out.println("debug.....markFirstPlay:" + markFirstPlay);
 			if (markFirstPlay == 1) {// 第一次播放音乐
 				System.out.println("debug.......... playIndex:" + playIndex);
@@ -104,8 +107,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 				System.out.println("debug......filePath:" + filePath);
 				markSelectedPlay = 0;
 			}
-			//上一曲，下一曲控制播放
-			if(controlPlay ==1 ){
+			// 上一曲，下一曲控制播放
+			if (controlPlay == 1) {
 				filePath = audioFileList.getFilePath(playIndex);
 				System.out.println("debug.......... file Path:" + filePath);
 				controlPlay = 0;
@@ -126,12 +129,12 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			}
 			playState = 0;
 		}
-		if (playState == 0) {//0 表示暂停
+		if (playState == 0) {// 0 表示暂停
 			setDuration();
 			mp.start();
 			playState = 1;
 		}
-		//一首播放结束调用这个函数
+		// 一首播放结束调用这个函数
 		mp.setOnCompletionListener(new OnCompletionListener() {
 
 			@Override
@@ -180,13 +183,13 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		System.out.println("playmode:" + playMode);
 		if (playMode == PLAYMODE_NORMAL) {// 顺序播放 value = 1.
 			playIndex = playIndex - 1;
-			if(playIndex < 0){//上一曲播放
+			if (playIndex < 0) {// 上一曲播放
 				playIndex = 0;
 			}
 		}
 		if (playMode == PLAYMODE_ORDER) {// 循环播放 value = 2.
 			playIndex = playIndex - 1;
-			if(playIndex < 0){//上一曲播放
+			if (playIndex < 0) {// 上一曲播放
 				playIndex = 0;
 			}
 		}
@@ -201,8 +204,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	}
 
 	/*
-	 * 按照当前播放模式，获得下一首歌曲的index，index为全局int index。 
-	 * (non-Javadoc)
+	 * 按照当前播放模式，获得下一首歌曲的index，index为全局int index。 (non-Javadoc)
+	 * 
 	 * @see com.shougao.Audio.media.IMediaService#next()
 	 */
 	@Override
@@ -216,13 +219,13 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		System.out.println("playmode:" + playMode);
 		if (playMode == PLAYMODE_NORMAL) {// 顺序播放 value = 1.
 			playIndex = playIndex + 1;
-			if(playIndex > fileNum){//下一曲播放
+			if (playIndex > fileNum) {// 下一曲播放
 				playIndex = 0;
 			}
 		}
 		if (playMode == PLAYMODE_ORDER) {// 循环播放 value = 2.
 			playIndex = playIndex + 1;
-			if(playIndex > fileNum){
+			if (playIndex > fileNum) {
 				playIndex = 0;
 			}
 		}
@@ -247,7 +250,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		System.out.println("media.Service.debug......getRepeatMode.");
 		// localPlayMode.setPlayMode(new OrderPlayMode());
 		int i = localPlayMode.getPlayMode();
-//		System.out.println("debug...=======playmode:" + i);
+		// System.out.println("debug...=======playmode:" + i);
 		return i;
 	}
 
@@ -268,18 +271,18 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	public int setRepeatMode() throws RemoteException {
 		System.out.println("=====defaultPlayMode:" + defaultPlayMode);
 		defaultPlayMode = defaultPlayMode + 1;
-//		CurrentPlayMode localPlayMode = new CurrentPlayMode();
+		// CurrentPlayMode localPlayMode = new CurrentPlayMode();
 		defaultPlayMode = (defaultPlayMode % 4);
 		switch (defaultPlayMode) {
 		case 1:
 			localPlayMode.setPlayMode(new NormalPlayMode());
-//			int a = localPlayMode.getPlayMode();
-//			System.out.println("=====defaultPlayMode:" + a);
+			// int a = localPlayMode.getPlayMode();
+			// System.out.println("=====defaultPlayMode:" + a);
 			break;
 		case 2:
 			localPlayMode.setPlayMode(new OrderPlayMode());
-//			int b = localPlayMode.getPlayMode();
-//			System.out.println("=====defaultPlayMode:" + b);
+			// int b = localPlayMode.getPlayMode();
+			// System.out.println("=====defaultPlayMode:" + b);
 			break;
 		case 3:
 			localPlayMode.setPlayMode(new SinglePlayMode());
@@ -354,7 +357,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void setDuration() throws RemoteException {
 		// TODO Auto-generated method stub
-		durationTime = mp.getDuration();//mp对象切换后，自动重新获得持续时间。
+		durationTime = mp.getDuration();// mp对象切换后，自动重新获得持续时间。
 	}
 
 	@Override
@@ -371,6 +374,34 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public void seek(int paramInt) throws RemoteException {
 		// TODO Auto-generated method stub
+		System.out.println("!");
 		mp.seekTo(paramInt);
+	}
+
+	@Override
+	public List<String> getMp3Info() throws RemoteException {
+		// TODO Auto-generated method stub
+		if(filePath == null)
+			return null;
+		mp3Info currentInfo = new mp3Info(filePath);
+		ArrayList<String> mp3Info = new ArrayList<String>();
+		int id = 0;
+		if(currentInfo.getMusicTitle() != null){
+			mp3Info.add(id, currentInfo.getMusicTitle());
+			id = id + 1;
+		}
+		if(currentInfo.getMusicArtist() != null){
+			mp3Info.add(id, currentInfo.getMusicArtist());
+			id = id + 1;
+		}
+		if(currentInfo.getMusicAlbum() != null){
+			mp3Info.add(id, currentInfo.getMusicAlbum());
+			id = id + 1;
+		}
+		if(currentInfo.getMusicComment() != null){
+			mp3Info.add(id, currentInfo.getMusicComment());
+			id = id + 1;
+		}
+		return mp3Info;
 	}
 }

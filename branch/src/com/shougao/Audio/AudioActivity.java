@@ -1,5 +1,7 @@
 package com.shougao.Audio;
 
+import java.util.ArrayList;
+
 import com.shougao.Audio.component.ScrollableViewGroup;
 import com.shougao.Audio.media.IMediaService;
 
@@ -13,6 +15,7 @@ import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.view.Menu;
@@ -32,7 +35,7 @@ import android.widget.Toast;
 
 public class AudioActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
-//	static boolean exitFLG = false;//标示推出Activity
+	static boolean exitFLG = false;//标示推出Activity
 	static int intPlayMode = 1;//初始化顺序播放
 	static int intPlayState = 0; // 0 stop, 1play.
 	static int runThread = 1;//控制刷新seekbar线程，与退出activity同步，1.表示在运行。
@@ -48,10 +51,12 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private TextView mTitle = null;
 	private TextView mArtist = null;
 	private TextView mAlbum = null;
-	private TextView mGenre = null;
+	private TextView mComment = null;
 	private static int totalTime; 
-	private static Handler mPercentHandler = new Handler();
+	private static Handler mPercentHandler = new Handler();//在initplayer中使用HandlerThread.getLooper初始化
 	ScrollableViewGroup viewGroup = null; 
+	HandlerThread handlerThread = new HandlerThread("updateSeekTime");
+	private ArrayList<String> musicInfo = null;
 	Context mContext;
 	
 	@Override
@@ -62,7 +67,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		mTitle  = (TextView)findViewById(R.id.musicTitle);
 		mArtist  = (TextView)findViewById(R.id.musicArtist);
 		mAlbum  = (TextView)findViewById(R.id.musicAlbum);
-		mGenre  = (TextView)findViewById(R.id.musicGenere);
+		mComment  = (TextView)findViewById(R.id.musicGenere);
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
@@ -163,9 +168,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 	};
 	protected void initPlayer() {
 		System.out.println("debug......initPlayer");
-//		if(localMediaService == null){
-//			System.out.println("debug....===================..null");
-//		}
 		// TODO Auto-generated method stub
 		try {
 			localMediaService.initPlayer();
@@ -177,25 +179,15 @@ public class AudioActivity extends Activity implements OnClickListener {
 	
 
 	public void updateSeekBar(){
+//		mPercentHandler = new Handler(handlerThread.getLooper());
 		mPercentHandler.post(updateSeekbar);
 	}
 
-//	Runnable start = new Runnable(){
-//
-//		@Override
-//		public void run() {
-//			// TODO Auto-generated method stub
-//			mPercentHandler.post(updateSeekbar);
-//		}
-//	};
-	
 	Runnable updateSeekbar = new Runnable(){
 		
 		@Override
 		public void run() {
-//			if(runThread == 0){
-//				return;
-//			}
+			System.out.println("debug....=============hghhhhhhhhhhh======..null");
 			String value = null;
 			int position = 0;
 			// TODO Auto-generated method stub
@@ -204,6 +196,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			if(totalTime == 0){
+				return;
 			}
 			if(totalTime != 0){
 				mSeekBar.setProgress(100*position/totalTime);
@@ -214,10 +209,11 @@ public class AudioActivity extends Activity implements OnClickListener {
 				value = (String.valueOf(position/60) +":"+ String.valueOf(position%60));
 			}
 			currentProcessText.setText(value);
-//			if(exitFLG == true){
-//				mPercentHandler.removeCallbacks(updateSeekbar);
-//			}
-			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
+			if(exitFLG == true){
+				mPercentHandler.removeCallbacks(updateSeekbar);
+			}
+			System.out.println("exitFLG" + exitFLG);
+//			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
 		}
 	};
@@ -251,6 +247,19 @@ public class AudioActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
+//	ArrayList<String> mp3Info = null;
+	private void updateMp3Info(){
+		try {
+			musicInfo = (ArrayList<String>) localMediaService.getMp3Info();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		mTitle.setText(musicInfo.indexOf(0));
+		mArtist.setText(musicInfo.indexOf(1));
+		mAlbum.setText(musicInfo.indexOf(2));
+		mComment.setText(musicInfo.indexOf(3));
+	}
 	
 	/*
 	 * 更新播放文件持续时间。
@@ -418,6 +427,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				Toast.makeText(getApplicationContext(), "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG).show();
+				exitFLG = true;//推出player之后就不能在读取service中数据，必须放到exitPlayer之前
 				exitPlayer();
 //				unbindService(mServiceConn);
 //				System.out.println("=======unbindService");
@@ -479,22 +489,31 @@ public class AudioActivity extends Activity implements OnClickListener {
 			localMediaService.release();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
+			System.out.println("=======unbindSerfdfvice============");
 			e.printStackTrace();
 		}
+		
 		unbindService(mServiceConn);
-		System.out.println("=======unbindService");
+		try{
 		finish();
-	}
+		}catch(Exception e){
+			System.out.println("=======unbindService");
+	}}
 	public void onOptionsMenuClosed(Menu menu) {
 		Toast.makeText(this, "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG)
 				.show();
 	}
 	
-	protected void onStop(){
-//		exitFLG = true;
+	public void onStop(){
+		exitFLG = true;
+		super.onStop();
+		System.out.println("Activity: onStop.");
+		exitFLG = true;
 	}
 	@Override
-	protected void onDestroy(){
+	public void onDestroy(){
+//		mPercentHandler.removeCallbacks(handlerThread);
+		super.onDestroy();
 		System.out.println("Activity: onDestroy.");
 	}
 }

@@ -16,12 +16,6 @@ public class AUDIO_TAG implements Parcelable {
 	public int audio_exist;
 	public int audio_frequency;
 	public String audio_genre;
-//	private int audio_id;
-//	public int audio_is_music;
-//	public int audio_is_readtag;
-//	public int audio_track;
-//	public int audio_year;
-//	public String audio_composer;
 
 	public AUDIO_TAG(Parcel source) {
 		// TODO Auto-generated constructor stub
@@ -36,7 +30,6 @@ public class AUDIO_TAG implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public static final Parcelable.Creator<AUDIO_TAG> CREATOR = new Parcelable.Creator<AUDIO_TAG>() {

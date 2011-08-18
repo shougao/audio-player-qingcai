@@ -145,7 +145,7 @@ public class ScrollableViewGroup extends ViewGroup {
 		// TODO Auto-generated method stub
 		if (mScroller.computeScrollOffset()) {
 			scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
-			postInvalidate();
+			postInvalidate();//线程中的刷新一个View为基类的界面，可以使用postInvalidate()方法在线程中来处理
 		}
 	}
 
