@@ -29,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -42,6 +43,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	static int runThread = 1;//控制刷新seekbar线程，与退出activity同步，1.表示在运行。
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
 			IndMenu, btnPrev;
+	private ImageButton IndMain = null;
 	private ImageView vPlayMode, vPlay;
 	private IMediaService localMediaService =null;
 	private ListView musicListView;
@@ -72,6 +74,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
+		IndMain = (ImageButton)findViewById(R.id.IndMain);
 		btnPlayMode = (ImageButton) findViewById(R.id.IndPlayMode);
 		btnList = (ImageButton) findViewById(R.id.ImgList);
 		viewGroup = (ScrollableViewGroup)findViewById(R.id.ViewFlipper);
@@ -88,6 +91,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		btnPrev.setOnClickListener(this);
 		ImgLyric.setOnClickListener(this);
 		IndMenu.setOnClickListener(this);
+		IndMain.setOnClickListener(this);
 		bindService(new Intent("com.shougao.Audio.REMOTE_SERVICE"),
 				mServiceConn, Context.BIND_AUTO_CREATE);
 		mSeekBar = (SeekBar)findViewById(R.id.skbGuage);
@@ -297,10 +301,19 @@ public class AudioActivity extends Activity implements OnClickListener {
 	}
 	//监听拖动条
 
+	/*
+	 * 获得将要
+	 */
+	public void getCurrentScreen(){
+		
+	}
 
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
+		case R.id.IndMain:
+			viewGroup.snapToScreen(0);//跳转到第一屏幕
+			break;
 		case R.id.btnPlay:
 			System.out.println("=========intPlayState:" + intPlayState);
 			switch (intPlayState) {
@@ -357,6 +370,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 		case R.id.ImgList:
 			System.out.println("DEBUG>>>ImgList=========");
+			viewGroup.snapToScreen(1);//跳转到第2个屏幕
 //			try {
 //				adapter = new ArrayAdapter<String>(getApplicationContext(),
 //						android.R.layout.simple_list_item_1,
@@ -423,8 +437,8 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 		case R.id.ImgLyric:
 			System.out.println("========imglyric");
-			System.out.println("DEBUG>>> main acitvity thread"
-					+ Thread.currentThread().getId());
+			System.out.println("DEBUG>>> main thread"+ Thread.currentThread().getId());
+			viewGroup.snapToScreen(2);//跳转到第三个屏幕
 			break;
 
 		case R.id.IndMenu:

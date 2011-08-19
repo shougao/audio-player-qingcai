@@ -38,6 +38,7 @@ public class ScrollableViewGroup extends ViewGroup {
 	private VelocityTracker mVelocityTracker;
 	private static final String TAG = "ScrollLayout";
 	private boolean mFirstLayout = true;
+	
 
 	public int getCurrentScreen(){
 		return mCurrentScreen;
