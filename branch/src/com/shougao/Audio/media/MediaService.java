@@ -43,6 +43,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	private static int durationTime = 0;
 	private static int controlPlay = 0;// 控制播放方式是通过上一曲下一曲播放。
 	private String filePath = null;
+	private String currentPlayAudio = null;
+	private List<String> mp3DetailInfo = new ArrayList<String>();//单曲的详细信息
 
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
@@ -59,7 +61,8 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	@Override
 	public String getCurrentPlayAudio() throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		currentPlayAudio = String.valueOf(playIndex +1)+"/"+String.valueOf(getPlayList().size());
+		return currentPlayAudio;
 	}
 
 	@Override
@@ -91,10 +94,11 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		System.out.println("debug....play():");
 		String fileName = null;
 
-		System.out.println("debug.....playState:" + playState);
+		System.out.println("debug.....playState:" + playState+":"+markFirstPlay+":"+markSelectedPlay+":"+controlPlay);
 		if (playState != 0) {// 控制是否从暂停开始播放
 			System.out.println("debug.....markFirstPlay:" + markFirstPlay);
-			if (markFirstPlay == 1) {// 第一次播放音乐
+			// 第一次播放音乐
+			if (markFirstPlay == 1) {
 				System.out.println("debug.......... playIndex:" + playIndex);
 				filePath = audioFileList.getFilePath(playIndex);// index为
 				System.out.println("debug.......... file Path:" + filePath);
@@ -117,6 +121,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 			try {
 				mp.setDataSource(filePath);
 				mp.prepare();
+				setDuration();
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -128,7 +133,9 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 				e.printStackTrace();
 			}
 			playState = 0;
+			setDuration();
 		}
+		
 		if (playState == 0) {// 0 表示暂停
 			setDuration();
 			mp.start();
@@ -146,6 +153,13 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+//				try {
+//					setDuration();
+//				} catch (RemoteException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+				//setMp3Info
 			}
 		});
 	}
@@ -383,27 +397,26 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		// TODO Auto-generated method stub
 		if(filePath == null)
 			return null;
-		System.out.println("====title=========================");
+		System.out.println("====title========================="+filePath);
+		//每次要清楚上一曲的歌曲信息，使用当前的信息填充
+		mp3DetailInfo.clear();
 		mp3Info currentInfo = new mp3Info(filePath);
-		List<String> mp3Info = new ArrayList<String>();
 //		int id = 0;
 		if(currentInfo.getMusicTitle() != null){
-			mp3Info.add(currentInfo.getMusicTitle());
-//			id = id + 1;
+			mp3DetailInfo.add(currentInfo.getMusicTitle());
+			System.out.println("======!"+currentInfo.getMusicTitle());
+			System.out.println("=====2!"+mp3DetailInfo.get(0));
 		}
 		if(currentInfo.getMusicArtist() != null){
-			mp3Info.add(currentInfo.getMusicArtist());
-//			id = id + 1;
+			mp3DetailInfo.add(currentInfo.getMusicArtist());
 		}
 		if(currentInfo.getMusicAlbum() != null){
-			mp3Info.add(currentInfo.getMusicAlbum());
-//			id = id + 1;
+			mp3DetailInfo.add(currentInfo.getMusicAlbum());
 		}
 		if(currentInfo.getMusicComment() != null){
-			mp3Info.add(currentInfo.getMusicComment());
-//			id = id + 1;
+			mp3DetailInfo.add(currentInfo.getMusicComment());
 		}
 		System.out.println(currentInfo.getMusicTitle()+"!====title=========================");
-		return mp3Info;
+		return mp3DetailInfo;
 	}
 }

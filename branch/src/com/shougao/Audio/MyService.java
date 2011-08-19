@@ -22,15 +22,18 @@ public class MyService extends Service {
 	}
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
+		System.out.println("debug...service:onBind");
 		return mediaService;
 	}
 	public boolean onUnbind(Intent intent){
-		System.out.println("debug...onUnbind");
+		super.onUnbind(intent);
+		System.out.println("debug...service:onUnbind");
 		return true;
 	}
 	
 	public void onDestroy(){
-		System.out.println("debug...onDestroy");
+		super.onDestroy();
+		System.out.println("debug...service:onDestroy");
 	}
 	
 	public void onStart(){

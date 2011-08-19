@@ -55,11 +55,12 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private TextView mArtist = null;
 	private TextView mAlbum = null;
 	private TextView mComment = null;
+	private TextView mNumber = null;
 	private static int totalTime; 
 	private static Handler mPercentHandler = new Handler();//在initplayer中使用HandlerThread.getLooper初始化
 	ScrollableViewGroup viewGroup = null; 
 	HandlerThread handlerThread = new HandlerThread("updateSeekTime");
-	private List<String> musicInfo = null;
+	private String currentPlayAudio = null;
 	Context mContext;
 	
 	@Override
@@ -70,7 +71,8 @@ public class AudioActivity extends Activity implements OnClickListener {
 		mTitle  = (TextView)findViewById(R.id.musicTitle);
 		mArtist  = (TextView)findViewById(R.id.musicArtist);
 		mAlbum  = (TextView)findViewById(R.id.musicAlbum);
-		mComment  = (TextView)findViewById(R.id.musicGenere);
+		mNumber  = (TextView)findViewById(R.id.musicNumber);
+		mComment  = (TextView)findViewById(R.id.musicCommon);
 		btnPlay = (ImageButton) findViewById(R.id.btnPlay);
 		btnNext = (ImageButton) findViewById(R.id.btnNext);
 		btnPrev = (ImageButton) findViewById(R.id.btnPrev);
@@ -98,7 +100,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		currentProcessText = (TextView)findViewById(R.id.txtLapse);
 		currentDurationText = (TextView)findViewById(R.id.txtDuration);
 		mSeekBar.setOnSeekBarChangeListener(mSeekBarOnClickListener);
-		
+//		mComment.setVisibility(View.GONE);
 	}
 	/*
 	 * 完成横竖屏切换
@@ -107,7 +109,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	 * @see android.app.Activity#onConfigurationChanged(android.content.res.Configuration)
 	 */
 	@Override
-	public void onConfigurationChanged(Configuration newConfig) {	 
+	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig); 
 		// 检测屏幕的方向：纵向或横向 
 		if (this.getResources().getConfiguration().orientation  
@@ -191,9 +193,13 @@ public class AudioActivity extends Activity implements OnClickListener {
 			e1.printStackTrace();
 		}
 		musicListView.setAdapter(adapter);
+
 	}
 	
 
+	/*
+	 * 这个需要实时更新，在
+	 */
 	public void updateSeekBar(){
 //		mPercentHandler = new Handler(handlerThread.getLooper());
 		mPercentHandler.post(updateSeekbar);
@@ -229,8 +235,15 @@ public class AudioActivity extends Activity implements OnClickListener {
 				mPercentHandler.removeCallbacks(updateSeekbar);
 			}
 			System.out.println("exitFLG" + exitFLG);
-			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
+//			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
+			//更新播放信息，在线程中，这个超级费时间，拖死ACTIVITY
+			//做一个时间判断函数，一旦播放结束更新。
+			System.out.println("position == totalTime:"+position+":"+totalTime);
+			if(position == totalTime){
+				System.out.println("debug...Thread");
+				updateInfo();
+			}
 		}
 	};
 	
@@ -252,7 +265,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			try {
 				localMediaService.passSelectedFile(position);
 				System.out.println("position:" + position);
-				updateDurationTime();
+				updateInfo();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -263,20 +276,44 @@ public class AudioActivity extends Activity implements OnClickListener {
 			}
 		}
 	};
-//	ArrayList<String> mp3Info = null;
+	/*
+	 * 获得歌曲详细信息，只显示3个信息
+	 */
 	private void updateMp3Info(){
 		try {
-			musicInfo = localMediaService.getMp3Info();
+			List<String> musicInfo = localMediaService.getMp3Info();
+			if(musicInfo.get(0) != null){
+				mTitle.setText("title:"+musicInfo.get(0).toString());
+			}else{
+				mTitle.setVisibility(View.GONE);
+			}
+			if(musicInfo.get(0) != null){
+				mArtist.setText("artist:"+musicInfo.get(1).toString());
+			}else{
+				mArtist.setVisibility(View.GONE);
+			}
+			if(musicInfo.get(0) != null){
+				mAlbum.setText("album:"+musicInfo.get(2).toString());
+			}else{
+				mAlbum.setVisibility(View.GONE);
+			}
+			try {
+				currentPlayAudio = localMediaService.getCurrentPlayAudio();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mNumber.setText(currentPlayAudio);
+//			if(musicInfo.get(0) != null){
+//				mComment.setText(musicInfo.get(3).toString());
+//			}else{
+//				mComment.setVisibility(View.GONE);
+//			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("================================");
-		System.out.println(musicInfo.indexOf(1)+"=======================================================99999999999");
-//		mTitle.setText(musicInfo.indexOf(0));
-		mArtist.setText("asdkfjkkjkj");
-//		mAlbum.setText(musicInfo.indexOf(2));
-//		mComment.setText(musicInfo.indexOf(3));
+		
 	}
 	
 	/*
@@ -299,13 +336,15 @@ public class AudioActivity extends Activity implements OnClickListener {
 		}
 		currentDurationText.setText(duration);
 	}
-	//监听拖动条
-
+	
 	/*
-	 * 获得将要
+	 * 更新歌曲信息，包括从，上一曲、下一曲、播放完成下一曲、点击播放、时更新的信息,seekbar的实时时间进度。
+	 * 内容有，歌曲持续时间、歌曲信息。
 	 */
-	public void getCurrentScreen(){
-		
+	public void updateInfo(){
+		updateMp3Info();
+		updateDurationTime();
+//		updateSeekBar();线程单独执行
 	}
 
 	@Override
@@ -325,10 +364,11 @@ public class AudioActivity extends Activity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				updateSeekBar();
-				updateDurationTime();
+				updateInfo();
 				vPlay.setImageResource(R.drawable.img_playback_bt_pause);
 				intPlayState = 1;
+				//开始执行seekbar的线程，这个线程一旦启动将一直执行
+				updateSeekBar();
 				break;
 			case 1:
 				// System.out.println("=========1 :" + intPlayState);
@@ -345,14 +385,13 @@ public class AudioActivity extends Activity implements OnClickListener {
 			break;
 		case R.id.btnNext:
 			System.out.println("DEBUG>>>next");
-			updateMp3Info();
 			try {
 				localMediaService.next();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			updateDurationTime();
+			updateInfo();
 			break;
 			
 		case R.id.btnPrev:
@@ -365,7 +404,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			updateDurationTime();
+			updateInfo();
 			break;
 
 		case R.id.ImgList:
