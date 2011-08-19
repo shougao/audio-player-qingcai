@@ -497,10 +497,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 				Toast.makeText(getApplicationContext(), "欢迎使用！" + "tel:15010611780", Toast.LENGTH_LONG).show();
 				exitFLG = true;//推出player之后就不能在读取service中数据，必须放到exitPlayer之前
 				exitPlayer();
-//				unbindService(mServiceConn);
-//				System.out.println("=======unbindService");
+				unbindService(mServiceConn);
+				System.out.println("=======unbindService");
 				finish();
-				
+				System.out.println("=======unbindService");
 			}
 		}).setNegativeButton("返回", new DialogInterface.OnClickListener() {
 			@Override
