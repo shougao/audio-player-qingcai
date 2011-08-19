@@ -198,7 +198,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	
 
 	/*
-	 * 这个需要实时更新，在
+	 * 这个需要实时更新，在play,和onitemclick的第一次启动，目的是为了担心两种方式没有启动。
 	 */
 	public void updateSeekBar(){
 //		mPercentHandler = new Handler(handlerThread.getLooper());
@@ -219,6 +219,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			System.out.println("debug....===="+position);
 			if(totalTime == 0){
 				return;
 			}
@@ -236,6 +237,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			}
 			System.out.println("exitFLG" + exitFLG);
 //			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
+			updateInfo();
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
 			//更新播放信息，在线程中，这个超级费时间，拖死ACTIVITY
 			//做一个时间判断函数，一旦播放结束更新。
@@ -274,6 +276,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			if(intPlayState ==0){
 				vPlay.setImageResource(R.drawable.img_playback_bt_pause);
 			}
+			updateSeekBar();
 		}
 	};
 	/*
