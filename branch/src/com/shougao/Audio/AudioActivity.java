@@ -101,6 +101,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		currentDurationText = (TextView)findViewById(R.id.txtDuration);
 		mSeekBar.setOnSeekBarChangeListener(mSeekBarOnClickListener);
 //		mComment.setVisibility(View.GONE);
+		System.out.println("debug....=============thread2======"+Thread.currentThread().getId());
 	}
 	/*
 	 * 完成横竖屏切换
@@ -209,7 +210,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 		
 		@Override
 		public void run() {
-			System.out.println("debug....=============hghhhhhhhhhhh======..null");
+			
 			String value = null;
 			int position = 0;
 			// TODO Auto-generated method stub
@@ -235,7 +236,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 			if(exitFLG == true){
 				mPercentHandler.removeCallbacks(updateSeekbar);
 			}
-			System.out.println("exitFLG" + exitFLG);
 //			updateDurationTime();//为了实现播放结束后自动播放下一曲时，自动更新下一曲的持续时间。
 			updateInfo();
 			mPercentHandler.postDelayed(updateSeekbar, 1000);
@@ -245,6 +245,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			if(position == totalTime){
 				System.out.println("debug...Thread");
 				updateInfo();
+				System.out.println("debug....=============thread======"+Thread.currentThread().getId());
 			}
 		}
 	};
@@ -266,7 +267,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 			System.out.println("!!!!!position:" + position);
 			try {
 				localMediaService.passSelectedFile(position);
-				System.out.println("position:" + position);
+//				System.out.println("position:" + position);
 				updateInfo();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -586,5 +587,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 //		mPercentHandler.removeCallbacks(handlerThread);
 		super.onDestroy();
 		System.out.println("Activity: onDestroy.");
+//		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 }

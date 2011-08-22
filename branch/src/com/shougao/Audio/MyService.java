@@ -18,7 +18,7 @@ public class MyService extends Service {
 	private MediaService mediaService = new MediaService();
 	
 	public void onCreate(){
-		
+		System.out.println("debug....=============thread3======"+Thread.currentThread().getId());
 	}
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
