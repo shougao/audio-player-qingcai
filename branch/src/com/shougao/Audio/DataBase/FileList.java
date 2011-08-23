@@ -54,6 +54,7 @@ public class FileList {
 				}
 			}
 		}
+		file = null;
 	}
 	
 	public ArrayList<String> getFileNameList() {

@@ -1,7 +1,5 @@
 package com.shougao.Audio;
 
-import java.io.IOException;
-
 import com.shougao.Audio.media.MediaService;
 
 import android.app.Service;

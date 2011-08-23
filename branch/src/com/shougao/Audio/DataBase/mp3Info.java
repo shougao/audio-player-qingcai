@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+
 /*
  * 读取mp3文件信息，并显示在playlayout上
  * 2011-8-17
@@ -17,13 +18,11 @@ public class mp3Info {
 	private String musicComment = null;
 	private File currentFile = null;
 	private byte[] buffer = new byte[128];
-	
+
 	/*
-	 * MediaService调用mp3Info，完成对当前音乐文件的信息处理
-	 * 构造函数完成对文件参数的接受及对文件的信息处理
-	 * 2011-8-18
+	 * MediaService调用mp3Info，完成对当前音乐文件的信息处理 构造函数完成对文件参数的接受及对文件的信息处理 2011-8-18
 	 */
-	public mp3Info(String fileName){
+	public mp3Info(String fileName) {
 		currentFile = new File(fileName);
 		try {
 			ran = new RandomAccessFile(currentFile, "r");
@@ -32,7 +31,7 @@ public class mp3Info {
 			e.printStackTrace();
 		}
 		try {
-			ran.seek(ran.length()-128);
+			ran.seek(ran.length() - 128);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,19 +42,30 @@ public class mp3Info {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		//获取tital等细节信息,转化成GBK读取。
-		
+		// 获取tital等细节信息,转化成GBK读取。
+
 		try {
-			setMusicTitle(new String(buffer,3,30,"GBK").trim());
-			setMusicArtist(new String(buffer,33,30,"GBK").trim());
-			setMusicAlbum(new String(buffer,63,30,"GBK").trim());
-			setMusicComment(new String(buffer,97,28,"GBK").trim());
+			setMusicTitle(new String(buffer, 3, 30, "GBK").trim());
+			setMusicArtist(new String(buffer, 33, 30, "GBK").trim());
+			setMusicAlbum(new String(buffer, 63, 30, "GBK").trim());
+			setMusicComment(new String(buffer, 97, 28, "GBK").trim());
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		/**
+		 * 解决程序运行一段时间，too many open files bug.
+		 */
+		finally {
+			try {
+				ran.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
-	
+
 	/**
 	 * @return the musicTitle
 	 */
@@ -64,7 +74,8 @@ public class mp3Info {
 	}
 
 	/**
-	 * @param musicTitle the musicTitle to set
+	 * @param musicTitle
+	 *            the musicTitle to set
 	 */
 	public void setMusicTitle(String musicTitle) {
 		this.musicTitle = musicTitle;
@@ -78,7 +89,8 @@ public class mp3Info {
 	}
 
 	/**
-	 * @param musicArtist the musicArtist to set
+	 * @param musicArtist
+	 *            the musicArtist to set
 	 */
 	public void setMusicArtist(String musicArtist) {
 		this.musicArtist = musicArtist;
@@ -92,7 +104,8 @@ public class mp3Info {
 	}
 
 	/**
-	 * @param musicAlbum the musicAlbum to set
+	 * @param musicAlbum
+	 *            the musicAlbum to set
 	 */
 	public void setMusicAlbum(String musicAlbum) {
 		this.musicAlbum = musicAlbum;
@@ -106,7 +119,8 @@ public class mp3Info {
 	}
 
 	/**
-	 * @param musicComment the musicComment to set
+	 * @param musicComment
+	 *            the musicComment to set
 	 */
 	public void setMusicComment(String musicComment) {
 		this.musicComment = musicComment;
