@@ -24,24 +24,24 @@ import android.widget.ImageView;
 
 public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 
-	static int playState = -1; // 1 play, 0 pause, -1 other
-	static final int PLAYING = 1;
-	static final int PAUSE = 2;
-	static final int STOP = 0;
-	static int defaultPlayMode = 1;
-	static int playIndex = 0;
-	static final int PLAYMODE_NORMAL = 1;// 循环播放
-	static final int PLAYMODE_ORDER = 2;// 顺序播放
-	static final int PLAYMODE_SINGLE = 3;// 单曲重复
-	static final int PLAYMODE_SHUFFLE = 4;// 随机播放
+	int playState = -1; // 1 play, 0 pause, -1 other
+	final int PLAYING = 1;
+	final int PAUSE = 2;
+	final int STOP = 0;
+	int defaultPlayMode = 1;
+	int playIndex = 0;
+	final int PLAYMODE_NORMAL = 1;// 循环播放
+	final int PLAYMODE_ORDER = 2;// 顺序播放
+	final int PLAYMODE_SINGLE = 3;// 单曲重复
+	final int PLAYMODE_SHUFFLE = 4;// 随机播放
 	private CurrentPlayMode localPlayMode = new CurrentPlayMode();
 	private MediaPlayer mp = new MediaPlayer();
 	FileList audioFileList = new FileList();
-	private static int markFirstPlay = 1; // 标记是不是第一次播放文件，1. 第一次播放列表第一个文件
-	private static int markSelectedPlay = 0; // 标记是不是选择播放，1， 选择播放。0.默认不选择播放。
-	private static int intPassSelectedFileIndex = -1;
-	private static int durationTime = 0;
-	private static int controlPlay = 0;// 控制播放方式是通过上一曲下一曲播放。
+	private int markFirstPlay = 1; // 标记是不是第一次播放文件，1. 第一次播放列表第一个文件
+	private int markSelectedPlay = 0; // 标记是不是选择播放，1， 选择播放。0.默认不选择播放。
+	private int intPassSelectedFileIndex = -1;
+	private int durationTime = 0;
+	private int controlPlay = 0;// 控制播放方式是通过上一曲下一曲播放。
 	private String filePath = null;
 	private String currentPlayAudio = null;
 	private List<String> mp3DetailInfo = new ArrayList<String>();//单曲的详细信息
@@ -233,13 +233,15 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		System.out.println("playmode:" + playMode);
 		if (playMode == PLAYMODE_NORMAL) {// 顺序播放 value = 1.
 			playIndex = playIndex + 1;
-			if (playIndex > fileNum) {// 下一曲播放
+			System.out.println("playIndex:" + playIndex);
+			System.out.println("fileNum:" + fileNum);
+			if (playIndex == fileNum) {// 下一曲播放
 				playIndex = 0;
 			}
 		}
 		if (playMode == PLAYMODE_ORDER) {// 循环播放 value = 2.
 			playIndex = playIndex + 1;
-			if (playIndex > fileNum) {
+			if (playIndex == fileNum) {
 				playIndex = 0;
 			}
 		}

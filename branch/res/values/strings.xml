@@ -3,4 +3,8 @@
     <string name="hello">Hello World, AudioActivity!</string>
     <string name="app_name">豆豆音乐播放器</string>
     <string name="ViewIndication">ViewIndication</string>
+    <string name="app_about_msg1">工作之余的作品，基于android 2.2 的mp3播放器，扫描SD卡上全部mp3文件，支持选择播放，使用便捷。欢迎联系，电话：15010611780</string>
+    <string name="app_about_msg4">电话：15010611780</string>
+    <string name="app_about_msg3">基于android 2.2 的mp3播放器，扫描SD卡上全部mp3文件，支持选择播放。</string>
+    <string name="app_about_msg2">工作之余作品</string>
 </resources>
