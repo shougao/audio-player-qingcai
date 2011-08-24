@@ -1,5 +1,6 @@
 package com.shougao.Audio;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +14,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +43,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	/** Called when the activity is first created. */
 	boolean exitFLG = false;// 标示推出Activity
 	int intPlayMode = 1;// 初始化顺序播放
+	private String pref_playMode = "pref_playMode";
 	int intPlayState = 0; // 0 stop, 1play.
 	int runThread = 1;// 控制刷新seekbar线程，与退出activity同步，1.表示在运行。
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
@@ -61,6 +66,7 @@ public class AudioActivity extends Activity implements OnClickListener {
 	private HandlerThread handlerThread = new HandlerThread("updateSeekTime");
 	ScrollableViewGroup viewGroup = null;
 	private String currentPlayAudio = null;
+	private static String PREF = "audio_pref";
 	Context mContext;
 
 	@Override
@@ -103,6 +109,30 @@ public class AudioActivity extends Activity implements OnClickListener {
 		// mComment.setVisibility(View.GONE);
 		System.out.println("debug....=============thread2======"
 				+ Thread.currentThread().getId());
+		
+		restorePref();
+		
+//		/**
+//		 * 如果保存了推出前的内容，则使用之前的内容赋值
+//		 * 值是在onSaveInstanceState中保存的，保存到一个bundle结构中
+//		 */
+//		if(savedInstanceState != null){
+//			System.out.println("intPlayMode:1:" + intPlayMode);
+//			intPlayMode = savedInstanceState.getInt("intPlayMode");
+//			System.out.println("intPlayMode:2:" + intPlayMode);
+//		}
+	}
+
+	/**
+	 * android两种保存状态的方式，onSaveInstanceState和getSharedPreferences
+	 * 这个是第二种
+	 * 2011-8-24
+	 */
+	private void restorePref() {
+		// TODO Auto-generated method stub
+//		SharedPreferences setting = getSharedPreferences(PREF,0);
+//		int intplaymode = setting.getInt(pref_playMode, 1);
+//		intPlayMode = intplaymode;
 	}
 
 	/*
@@ -500,6 +530,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 		}
 	}
 
+	/**
+	 * 提示退出系统
+	 * 
+	 */
 	public void showInfo() {
 		new AlertDialog.Builder(this)
 				.setTitle("info")
@@ -523,14 +557,11 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 	}
 
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		// TODO Auto-generated method stub
-		if (item.getItemId() == 1) {
-			finish();
-		}
-		return super.onMenuItemSelected(featureId, item);
-	}
 
+
+	/**
+	 * 添加菜单功能，使用menu.add添加
+	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		/*
 		 * add()方法的四个参数，依次是： 1、组别，如果不分组的话就写Menu.NONE,
@@ -543,6 +574,17 @@ public class AudioActivity extends Activity implements OnClickListener {
 				android.R.drawable.ic_menu_close_clear_cancel);
 		return true;
 	}
+	
+//	/**
+//	 * 追加菜单点击操作处理的时候，覆盖onMenuItemSelected()方法
+//	 */
+//	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+//		// TODO Auto-generated method stub
+//		if (item.getItemId() == 1) {
+//			finish();
+//		}
+//		return super.onMenuItemSelected(featureId, item);
+//	}
 
 	/**
 	 * 对键盘menu键的响应处理
@@ -562,6 +604,9 @@ public class AudioActivity extends Activity implements OnClickListener {
 		return false;
 	}
 
+	/**
+	 * 添加menu中的关于对话框功能
+	 */
 	private void openOptionsDialog() {
 		// TODO Auto-generated method stub
 		new AlertDialog.Builder(this).setTitle("        简介")
@@ -590,17 +635,17 @@ public class AudioActivity extends Activity implements OnClickListener {
 			localMediaService.release();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
-			System.out.println("=======unbindSerice============");
 			e.printStackTrace();
 		}
 		unbindService(mServiceConn);
+		System.out.println("Activity...unBindService");
 		try {
 			finish();
+			System.out.println("Activity...finish");
 		} catch (Exception e) {
-			System.out.println("=======unbindService");
 		}
 	}
-
+	
 	/**
 	 * 这是个自动执行函数，在OnOptionMenu执行之后执行
 	 */
@@ -608,14 +653,39 @@ public class AudioActivity extends Activity implements OnClickListener {
 		Toast.makeText(this, "谢谢您的使用！" + "tel:15010611780", Toast.LENGTH_LONG)
 				.show();
 	}
+	
+	/**
+	 * 为了保证程序正确性， 为了再次打开程序和原来打开过的一样，
+	 * 在activity运行到onPause或者onStop状态时，先保存资料，写上持久层操作代码
+	 * 然后在onCreate时读出来
+	 * 2011-8-24
+	 * 记录之前的运行结果还没有实现
+	 */
+	@Override
+	public void onPause(){
+		System.out.println("Activity...onPause.");
+		super.onPause();
+		
+//		SharedPreferences setting = getSharedPreferences(PREF, 0);
+//		Editor editor = setting.edit();
+//		editor.putInt(pref_playMode, intPlayMode);
+//		editor.commit();
+	}
+	
+	/**
+	 * 维护一个map对象，存放被回收的数据内容，也可能不回收，使用前判断null
+	 * 内存被回收，则重新启动需要调用带参数的onCreate
+	 */
+	public void onSaveInstanceState(Bundle outState){
+		super.onSaveInstanceState(outState);
+		outState.putInt("intPlayMode", intPlayMode);
+	}
 
 	public void onStop() {
 		mPercentHandler.removeCallbacks(updateSeekbar);
 		exitFLG = true;
 		super.onStop();
 		System.out.println("Activity...onStop.");
-		exitFLG = true;
-
 	}
 
 	@Override
@@ -624,5 +694,31 @@ public class AudioActivity extends Activity implements OnClickListener {
 		System.out.println("Activity...onDestroy.");
 		// android.os.Process.killProcess(android.os.Process.myPid());
 	}
+	
+	/**
+	 * 屏蔽了返回键执行默认的stop， destroy
+	 * 实现方式1.程序只执行stop并回到home
+	 * 实现方式2.程序弹出退出确认框
+	 * 
+	 * 2011-8-24
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode,KeyEvent event) {  
+		if(keyCode ==  event.KEYCODE_BACK && event.getRepeatCount() == 0){
+//			Intent home = new Intent(Intent.ACTION_MAIN);//方式1
+//			home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//			home.addCategory(Intent.CATEGORY_HOME);
+//			startActivity(home);
+			showInfo();//方式2
+			System.out.println("Activity...onBack.");
+		}
+		return super.onKeyDown(keyCode, event);//如果不是back键正常响应
+	}
 
 }
+
+
+
+
+
+
