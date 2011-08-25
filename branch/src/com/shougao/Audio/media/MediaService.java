@@ -394,20 +394,23 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		mp.seekTo(paramInt);
 	}
 
+	/**
+	 * 每秒钟在Activity中调用一次，显示当前歌曲的信息
+	 */
 	@Override
 	public List<String> getMp3Info() throws RemoteException {
 		// TODO Auto-generated method stub
 		if(filePath == null)
 			return null;
-		System.out.println("====title========================="+filePath);
+//		System.out.println("====title========================="+filePath);
 		//每次要清楚上一曲的歌曲信息，使用当前的信息填充
 		mp3DetailInfo.clear();
 		mp3Info currentInfo = new mp3Info(filePath);
 //		int id = 0;
 		if(currentInfo.getMusicTitle() != null){
 			mp3DetailInfo.add(currentInfo.getMusicTitle());
-			System.out.println("======!"+currentInfo.getMusicTitle());
-			System.out.println("=====2!"+mp3DetailInfo.get(0));
+//			System.out.println("======!"+currentInfo.getMusicTitle());
+//			System.out.println("=====2!"+mp3DetailInfo.get(0));
 		}
 		if(currentInfo.getMusicArtist() != null){
 			mp3DetailInfo.add(currentInfo.getMusicArtist());
@@ -418,7 +421,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		if(currentInfo.getMusicComment() != null){
 			mp3DetailInfo.add(currentInfo.getMusicComment());
 		}
-		System.out.println(currentInfo.getMusicTitle()+"!====title=========================");
+//		System.out.println(currentInfo.getMusicTitle()+"!====title=========================");
 		return mp3DetailInfo;
 	}
 }

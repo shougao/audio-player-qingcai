@@ -123,6 +123,10 @@ public class AudioActivity extends Activity implements OnClickListener {
 //		}
 	}
 
+	public void onStart(){
+		super.onStart();
+		System.out.println("Activity...onStart");
+	}
 	/**
 	 * android两种保存状态的方式，onSaveInstanceState和getSharedPreferences
 	 * 这个是第二种
@@ -230,15 +234,20 @@ public class AudioActivity extends Activity implements OnClickListener {
 
 	/*
 	 * 这个需要实时更新，在play,和onitemclick的第一次启动，目的是为了担心两种方式没有启动。 这个是和activity在一个线程中
+	 * 2011-8-10
+	 * update:
+	 * 需要在回到homescreen之后长按home键onResume刷新这个时间，再次调用
 	 */
 	public void updateSeekBar() {
+		System.out.println("debug...updateSeekBar1");
 		mPercentHandler.post(updateSeekbar);
 	}
 
 	Runnable updateSeekbar = new Runnable() {
-
+		
 		@Override
 		public void run() {
+			System.out.println("debug...updateSeekBar2");
 			String value = null;
 			int position = 0;
 			// TODO Auto-generated method stub
@@ -554,7 +563,6 @@ public class AudioActivity extends Activity implements OnClickListener {
 						System.out.println("返回");
 					}
 				}).show();
-
 	}
 
 
@@ -653,7 +661,13 @@ public class AudioActivity extends Activity implements OnClickListener {
 		Toast.makeText(this, "谢谢您的使用！" + "tel:15010611780", Toast.LENGTH_LONG)
 				.show();
 	}
-	
+
+	public void onRestoreInstanceState(Bundle savedInstanceState){
+		super.onRestoreInstanceState(savedInstanceState);
+		System.out.println("Activity...onRestoreInstanceState");
+		
+	}
+
 	/**
 	 * 为了保证程序正确性， 为了再次打开程序和原来打开过的一样，
 	 * 在activity运行到onPause或者onStop状态时，先保存资料，写上持久层操作代码
@@ -671,7 +685,16 @@ public class AudioActivity extends Activity implements OnClickListener {
 //		editor.putInt(pref_playMode, intPlayMode);
 //		editor.commit();
 	}
-	
+	/*
+	 * (non-Javadoc)
+	 * @see android.app.Activity#onResume()
+	 */
+	@Override
+	public void onResume(){
+		super.onResume();
+//		updateSeekBar();
+		System.out.println("Activity...onResume.");
+	}
 	/**
 	 * 维护一个map对象，存放被回收的数据内容，也可能不回收，使用前判断null
 	 * 内存被回收，则重新启动需要调用带参数的onCreate
@@ -687,6 +710,20 @@ public class AudioActivity extends Activity implements OnClickListener {
 		super.onStop();
 		System.out.println("Activity...onStop.");
 	}
+	
+	/**
+	 * onStop->onRestart->onStart->onResume(回到原来程序过程)
+	 * 2011-8-25
+	 * 为了解决onStop后能继续显示信息,添加updateSeekBar和updageSeekBar的控制变量exitFLG
+	 */
+	@Override
+	public void onRestart(){
+		super.onRestart();
+		updateSeekBar();
+		exitFLG = false;
+		System.out.println("Activity...onRestart.");
+	}
+	
 
 	@Override
 	public void onDestroy() {
