@@ -60,4 +60,5 @@
     <item type="id" name="RelativeMp3Text"></item>
     <item name="musicCommon" type="id"></item>
     <item type="id" name="musicNumber"></item>
+    <item type="id" name="screenup"></item>
 </resources>

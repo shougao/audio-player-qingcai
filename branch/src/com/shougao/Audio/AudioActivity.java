@@ -21,17 +21,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -39,13 +43,15 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class AudioActivity extends Activity implements OnClickListener {
+public class AudioActivity extends Activity implements OnClickListener, Runnable {
 	/** Called when the activity is first created. */
+	boolean isOver = true;//用于启动画面
 	boolean exitFLG = false;// 标示推出Activity
 	int intPlayMode = 1;// 初始化顺序播放
 	private String pref_playMode = "pref_playMode";
 	int intPlayState = 0; // 0 stop, 1play.
 	int runThread = 1;// 控制刷新seekbar线程，与退出activity同步，1.表示在运行。
+	private LinearLayout screenup = null;
 	private ImageButton btnPlayMode, btnPlay, btnNext, btnList, ImgLyric,
 			IndMenu, btnPrev;
 	private ImageButton IndMain = null;
@@ -72,7 +78,15 @@ public class AudioActivity extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+		
+		
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		setContentView(R.layout.main);		
+		screenup=(LinearLayout)findViewById(R.id.screenup);
+		
+
 		mContext = this;
 		mTitle = (TextView) findViewById(R.id.musicTitle);
 		mArtist = (TextView) findViewById(R.id.musicArtist);
@@ -121,8 +135,59 @@ public class AudioActivity extends Activity implements OnClickListener {
 //			intPlayMode = savedInstanceState.getInt("intPlayMode");
 //			System.out.println("intPlayMode:2:" + intPlayMode);
 //		}
+		
+		
+
+		new Thread(this).start();
 	}
 
+	/**
+	 * 添加启动画面功能，包括从oncreate中的Thread start，run，screenHandler， show。
+	 * 2011-8-25
+	 */
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		isOver = true;
+		show();
+	}
+	
+    private void show(){
+        Message msg=new Message();
+        if(isOver){
+            msg.what=0;
+            screenHandler.sendMessage(msg);
+        }else{
+            msg.what=1;
+            screenHandler.sendMessage(msg);
+        }
+    }
+    
+    Handler screenHandler = new Handler(){
+    	
+    	@Override
+    	public void handleMessage(Message msg){
+    		super.handleMessage(msg);
+    		switch(msg.what){
+    		case 0://隐藏
+    			System.out.println("Activity......gone");
+    			screenup.setVisibility(View.GONE);
+    			getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    			break;
+    		case 1:
+    			 Toast.makeText(getApplicationContext(), "加载中", Toast.LENGTH_SHORT).show();
+    			 System.out.println("Activity......show");
+                 break;
+    		}
+    	}
+    };
+    
 	public void onStart(){
 		super.onStart();
 		System.out.println("Activity...onStart");
@@ -751,6 +816,8 @@ public class AudioActivity extends Activity implements OnClickListener {
 		}
 		return super.onKeyDown(keyCode, event);//如果不是back键正常响应
 	}
+
+
 
 }
 

@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+			
+
 <RelativeLayout
 	android:id="@+id/relativeLayout1"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android">
+	<LinearLayout
+				android:id="@id/screenup"
+				android:layout_weight="1.0"
+				android:layout_width="fill_parent"
+				xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="fill_parent" android:background="#99999999">
+		<ImageView android:src="@drawable/bg" android:layout_height="wrap_content" android:id="@+id/imageView2" android:layout_width="wrap_content"></ImageView>
+</LinearLayout>
 	<RelativeLayout
 		android:layout_alignParentTop="true"
 		android:layout_width="fill_parent"
@@ -247,3 +256,4 @@
 	</RelativeLayout>
 	-->
 </RelativeLayout>
+
