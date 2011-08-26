@@ -12,7 +12,7 @@ public class FileList {
 	 * 所有id都从0开始计算，在界面显示的歌曲列表从1开始
 	 * 2011-8-15
 	 */
-	private static final String SD_PATH = "/sdcard";
+	private static final String SD_PATH = "/config";
 	private ArrayList<String> mp3List = new ArrayList<String>();//用于存放显示的歌曲列表
 	private HashMap pathMap = new HashMap();//用于存放id - 路径对应表
 	private HashMap listMap = new HashMap();//用于存放id - 文件内容对象表

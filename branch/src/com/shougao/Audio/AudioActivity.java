@@ -143,7 +143,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	public void run() {
 		// TODO Auto-generated method stub
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -464,7 +464,12 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 			viewGroup.snapToScreen(0);// 跳转到第一屏幕
 			break;
 		case R.id.btnPlay:
-			System.out.println("=========intPlayState:" + intPlayState);
+			System.out.println("=========adapter:" + adapter.getCount());
+			//判断是不是没有音乐文件，没有加载完也会认为没有文件
+			if(0 == adapter.getCount()){
+				Toast.makeText(getApplicationContext(), "尚未搜索到mp3文件...", Toast.LENGTH_SHORT).show();
+				break;
+			}
 			switch (intPlayState) {
 			case 0:
 				// System.out.println("========= 0  :" + intPlayState);
