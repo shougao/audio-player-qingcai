@@ -1,7 +1,5 @@
 package com.shougao.Audio;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.shougao.Audio.component.ScrollableViewGroup;
@@ -14,8 +12,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -37,7 +32,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -48,7 +42,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	boolean isOver = true;//用于启动画面
 	boolean exitFLG = false;// 标示推出Activity
 	int intPlayMode = 1;// 初始化顺序播放
-	private String pref_playMode = "pref_playMode";
+//	private String pref_playMode = "pref_playMode";
 	int intPlayState = 0; // 0 stop, 1play.
 	int runThread = 1;// 控制刷新seekbar线程，与退出activity同步，1.表示在运行。
 	private LinearLayout screenup = null;
@@ -72,7 +66,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	private HandlerThread handlerThread = new HandlerThread("updateSeekTime");
 	ScrollableViewGroup viewGroup = null;
 	private String currentPlayAudio = null;
-	private static String PREF = "audio_pref";
+//	private static String PREF = "audio_pref";
 	Context mContext;
 
 	@Override
@@ -80,9 +74,8 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		super.onCreate(savedInstanceState);
 		
 		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//		requestWindowFeature(Window.FEATURE_NO_TITLE);//隐藏程序的标题栏，豆豆音乐播放器几个字
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏
 		setContentView(R.layout.main);		
 		screenup=(LinearLayout)findViewById(R.id.screenup);
 		
@@ -124,7 +117,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		System.out.println("debug....=============thread2======"
 				+ Thread.currentThread().getId());
 		
-		restorePref();
+//		restorePref();
 		
 //		/**
 //		 * 如果保存了推出前的内容，则使用之前的内容赋值
@@ -143,6 +136,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 
 	/**
 	 * 添加启动画面功能，包括从oncreate中的Thread start，run，screenHandler， show。
+	 * 单独起这个线程完成启动画面的显示
 	 * 2011-8-25
 	 */
 	@Override
@@ -192,17 +186,18 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		super.onStart();
 		System.out.println("Activity...onStart");
 	}
-	/**
-	 * android两种保存状态的方式，onSaveInstanceState和getSharedPreferences
-	 * 这个是第二种
-	 * 2011-8-24
-	 */
-	private void restorePref() {
-		// TODO Auto-generated method stub
+	
+//	/**
+//	 * android两种保存状态的方式，onSaveInstanceState和getSharedPreferences
+//	 * 这个是第二种
+//	 * 2011-8-24
+//	 */
+//	private void restorePref() {
+//		// TODO Auto-generated method stub
 //		SharedPreferences setting = getSharedPreferences(PREF,0);
 //		int intplaymode = setting.getInt(pref_playMode, 1);
 //		intPlayMode = intplaymode;
-	}
+//	}
 
 	/*
 	 * 完成横竖屏切换 2011-8-15 (non-Javadoc)
@@ -788,7 +783,6 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		exitFLG = false;
 		System.out.println("Activity...onRestart.");
 	}
-	
 
 	@Override
 	public void onDestroy() {
@@ -816,9 +810,6 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		}
 		return super.onKeyDown(keyCode, event);//如果不是back键正常响应
 	}
-
-
-
 }
 
 
