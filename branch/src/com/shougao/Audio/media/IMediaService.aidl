@@ -40,4 +40,6 @@ void setStopTimer(long paramInt);
 void updatePlayList(out AUDIO_TAG[] paramInt);
 void passSelectedFile(int paramInt);
 List<String> getMp3Info();
+void updatePath(String paramStr);
+String getPlayPath();
 }

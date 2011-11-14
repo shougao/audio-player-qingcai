@@ -66,6 +66,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	private HandlerThread handlerThread = new HandlerThread("updateSeekTime");
 	ScrollableViewGroup viewGroup = null;
 	private String currentPlayAudio = null;
+	private String playPath = null;
 //	private static String PREF = "audio_pref";
 	Context mContext;
 
@@ -78,7 +79,6 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//设置全屏
 		setContentView(R.layout.main);		
 		screenup=(LinearLayout)findViewById(R.id.screenup);
-		
 
 		mContext = this;
 		mTitle = (TextView) findViewById(R.id.musicTitle);
@@ -96,6 +96,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		ImgLyric = (ImageButton) findViewById(R.id.ImgLyric);
 		IndMenu = (ImageButton) findViewById(R.id.IndMenu);
 		musicListView = (ListView) findViewById(R.id.PlayList);
+		System.out.println("================="+ R.id.PlayList);
 		musicListView.setOnItemClickListener(musicListOnItemClickListenerClick);
 		vPlayMode = (ImageView) findViewById(R.id.imgPlayMode);
 		vPlay = (ImageView) findViewById(R.id.imgPlay);
@@ -107,6 +108,8 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		ImgLyric.setOnClickListener(this);
 		IndMenu.setOnClickListener(this);
 		IndMain.setOnClickListener(this);
+		//绑定服务，activity connect server时，会自动bindservice，disconnect
+		//时，会自动unbindservice，
 		bindService(new Intent("com.shougao.Audio.REMOTE_SERVICE"),
 				mServiceConn, Context.BIND_AUTO_CREATE);
 		mSeekBar = (SeekBar) findViewById(R.id.skbGuage);
@@ -222,7 +225,9 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 			// 实体键盘处于合上状态，在此处添加额外的处理代码
 		}
 	}
-
+	/**
+	 * localMediaService这个东东创建以后，使用cobra一样的机制，有个stub插槽把activity和service关联起来，实现能直接调用service方法。
+	 */
 	private ServiceConnection mServiceConn = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -463,15 +468,18 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 		if(adapter == null){
 			return;
 		}
-		if(0 == adapter.getCount()){
-			Toast.makeText(getApplicationContext(), "尚未搜索到mp3文件...", Toast.LENGTH_SHORT).show();
-			return;
-		}
+//		if(0 == adapter.getCount()){
+//			Toast.makeText(getApplicationContext(), "尚未搜索到mp3文件...", Toast.LENGTH_SHORT).show();
+//			return;
+//		}
 		switch (v.getId()) {
 		case R.id.IndMain:
 			viewGroup.snapToScreen(0);// 跳转到第一屏幕
 			break;
 		case R.id.btnPlay:
+			if(checkMusicGotted()){
+				return;
+			}
 			System.out.println("=========adapter:" + adapter.getCount());
 
 			switch (intPlayState) {
@@ -503,6 +511,9 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 			}
 			break;
 		case R.id.btnNext:
+			if(checkMusicGotted()){
+				return;
+			}
 			System.out.println("DEBUG>>>next");
 			try {
 				localMediaService.next();
@@ -514,6 +525,9 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 			break;
 
 		case R.id.btnPrev:
+			if(checkMusicGotted()){
+				return;
+			}
 			System.out.println("DEBUG>>>prevent");
 			// CurrentPlayMode pm = new CurrentPlayMode();
 			// System.out.println(":" + pm.getPlayMode());
@@ -609,6 +623,19 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	}
 
 	/**
+	 * 做一个判断，防止没有搜索到歌曲文件按钮点击出现异常
+	 * @return
+	 */
+	private boolean checkMusicGotted() {
+		// TODO Auto-generated method stub
+		if(0 == adapter.getCount()){
+			Toast.makeText(getApplicationContext(), "尚未搜索到mp3文件...", Toast.LENGTH_SHORT).show();
+			return true;
+		}
+		return false;
+	}
+
+	/**
 	 * 提示退出系统
 	 * 
 	 */
@@ -649,6 +676,8 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 				android.R.drawable.ic_menu_info_details);
 		menu.add(Menu.NONE, Menu.FIRST + 2, 2, "exit").setIcon(
 				android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(Menu.NONE, Menu.FIRST + 3, 3, "browser").setIcon(
+				android.R.drawable.ic_menu_add);
 		return true;
 	}
 	
@@ -676,6 +705,9 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 			break;
 		case Menu.FIRST + 2:
 			exitPlayer();
+			break;
+		case Menu.FIRST + 3:
+			browserFile();
 			break;
 		}
 		return false;
@@ -724,12 +756,64 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	}
 	
 	/**
+	 * 浏览文件夹播放,为了播放浏览的文件
+	 */
+	private void browserFile(){
+		Intent iBrowser = new Intent(AudioActivity.this, BrowserFile.class);
+		startActivityForResult(iBrowser, 0);
+	}
+	
+	/**
+	 * 收到输入的路径，播放这个路径的东东
+	 * 添加播放音乐使用，当更新播放目录后，停止以前播放。
+	 */
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
+        super.onActivityResult(requestCode, resultCode, data);  
+        //取出字符串  
+        Bundle bundle = data.getExtras();
+        
+        if(bundle.isEmpty()){//需要抛异常，如果有异常则不执行更新目录。
+        	return;
+        }
+        try {
+			localMediaService.stop();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		vPlay.setImageResource(R.drawable.img_playback_bt_pause);
+		intPlayState = 0;
+		
+		
+        String str = bundle.getString("str");  
+        System.out.println("====browser" + str);
+        playPath = str;
+        updateDir(playPath);
+    }
+	
+	/**
+	 * 更新播放文件夹,
+	 * 更新文件夹相当于重新重置了播放列表，播放列表在initPlayer中初始化，
+	 * 所以需要重新调用initPlayer()
+	 * 
+	 */
+	private void updateDir(String playPath){
+		try {
+			localMediaService.updatePath(playPath);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		initPlayer();
+	}
+	
+	/**
 	 * 这是个自动执行函数，在OnOptionMenu执行之后执行
 	 */
-	public void onOptionsMenuClosed(Menu menu) {
-		Toast.makeText(this, "谢谢您的使用！" + "tel:15010611780", Toast.LENGTH_LONG)
-				.show();
-	}
+//	public void onOptionsMenuClosed(Menu menu) {
+//		Toast.makeText(this, "谢谢您的使用！" + "tel:15010611780", Toast.LENGTH_LONG)
+//				.show();
+//	}
 
 	public void onRestoreInstanceState(Bundle savedInstanceState){
 		super.onRestoreInstanceState(savedInstanceState);

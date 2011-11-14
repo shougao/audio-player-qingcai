@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:Android="http://schemas.android.com/apk/res/android"
+    Android:layout_width="match_parent"
+    Android:layout_height="match_parent"
+    Android:orientation="vertical" >
+
+    <RelativeLayout
+        Android:id="@+id/relativeLayout1"
+        Android:layout_width="match_parent"
+        Android:layout_height="wrap_content" >
+
+        <AutoCompleteTextView
+            Android:id="@id/dirPath"
+            Android:layout_width="wrap_content"
+            Android:layout_height="wrap_content"
+            Android:layout_alignParentLeft="true"
+            Android:layout_alignParentTop="true"
+            Android:layout_toLeftOf="@id/browserPlay"
+            Android:text="/mnt/sdcard/" >
+
+            <requestFocus />
+        </AutoCompleteTextView>
+
+        <Button
+            Android:id="@id/browserPlay"
+            Android:layout_width="wrap_content"
+            Android:layout_height="wrap_content"
+            Android:layout_alignParentRight="true"
+            Android:layout_alignParentTop="true"
+            Android:text="play" />
+
+    </RelativeLayout>
+
+    <ListView
+        Android:id="@id/dirlist"
+        Android:layout_width="match_parent"
+        Android:layout_height="wrap_content" >
+    </ListView>
+
+</LinearLayout>

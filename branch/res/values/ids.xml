@@ -58,7 +58,10 @@
     <item type="id" name="linearTextInfo"></item>
     <item type="id" name="imageAlbumart"></item>
     <item type="id" name="RelativeMp3Text"></item>
-    <item name="musicCommon" type="id"></item>
+    <item type="id" name="musicCommon"></item>
     <item type="id" name="musicNumber"></item>
     <item type="id" name="screenup"></item>
+    <item type="id" name="dirlist"></item>
+    <item type="id" name="browserPlay"></item>
+    <item type="id" name="dirPath"></item>
 </resources>

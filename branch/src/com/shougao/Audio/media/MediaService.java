@@ -45,6 +45,7 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 	private String filePath = null;
 	private String currentPlayAudio = null;
 	private List<String> mp3DetailInfo = new ArrayList<String>();//单曲的详细信息
+	public String playPathDir = null;//当前播放文件夹的路径
 
 	@Override
 	public AUDIO_TAG[] getAudio() throws RemoteException {
@@ -423,5 +424,19 @@ public class MediaService extends com.shougao.Audio.media.IMediaService.Stub {
 		}
 //		System.out.println(currentInfo.getMusicTitle()+"!====title=========================");
 		return mp3DetailInfo;
+	}
+	
+	/**
+	 * 完成目录更新并扫描，重新设置FileList类实例。
+	 */
+	public void updatePath(String paramStr){
+		playPathDir = paramStr;
+		System.out.println("=======from server:"+playPathDir);
+		audioFileList.initFileList(playPathDir);
+	}
+	
+	public String getPlayPath(){
+		
+		return playPathDir;
 	}
 }

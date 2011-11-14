@@ -24,6 +24,7 @@
 				<action android:name="com.shougao.Audio.REMOTE_SERVICE"></action>
 			</intent-filter>
 		</service>
+		<activity android:name=".BrowserFile"></activity>
 
 	</application>
 </manifest>
