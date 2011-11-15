@@ -294,6 +294,10 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		//对于集成进来的界面，在layout的xml层中进行集成，
+		//所有集成进来的界面都作为主界面中的控件，
+		//这些控件左右主界面中定义的东西进行使用。
+		//就像播放列表是在主界面的控制逻辑加数据
 		musicListView.setAdapter(adapter);
 	}
 
@@ -759,6 +763,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	 * 浏览文件夹播放,为了播放浏览的文件
 	 */
 	private void browserFile(){
+		System.out.println("=======browserFile()");
 		Intent iBrowser = new Intent(AudioActivity.this, BrowserFile.class);
 		startActivityForResult(iBrowser, 0);
 	}
@@ -767,8 +772,9 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	 * 收到输入的路径，播放这个路径的东东
 	 * 添加播放音乐使用，当更新播放目录后，停止以前播放。
 	 */
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {  
-        super.onActivityResult(requestCode, resultCode, data);  
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("=======get the activity result");
         //取出字符串  
         Bundle bundle = data.getExtras();
         
@@ -798,6 +804,7 @@ public class AudioActivity extends Activity implements OnClickListener, Runnable
 	 * 
 	 */
 	private void updateDir(String playPath){
+		System.out.println("=======updateDir()");
 		try {
 			localMediaService.updatePath(playPath);
 		} catch (RemoteException e) {
