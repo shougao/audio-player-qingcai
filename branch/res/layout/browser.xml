@@ -16,7 +16,7 @@
             Android:layout_alignParentLeft="true"
             Android:layout_alignParentTop="true"
             Android:layout_toLeftOf="@id/browserPlay"
-            Android:text="/mnt/sdcard/" >
+            Android:text="/" >
 
             <requestFocus />
         </AutoCompleteTextView>
